@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>银行股涨跌监测日报</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f0f2f5; color: #1a1b1c; line-height: 1.6;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 24px 16px; }
+  .header {
+    background: linear-gradient(135deg, #0f2c4d 0%, #1a4a7a 100%);
+    color: #fff; padding: 28px 32px; border-radius: 14px; margin-bottom: 20px;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-size: 22px; font-weight: 700; }
+  .header .date { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .header .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge.bull { background: rgba(72,187,120,0.25); color: #68d391; border: 1px solid rgba(104,211,145,0.4); }
+  .badge.bear { background: rgba(245,101,101,0.25); color: #fc8181; border: 1px solid rgba(252,129,129,0.4); }
+  .badge.neutral { background: rgba(236,201,75,0.25); color: #f6e05e; border: 1px solid rgba(246,224,94,0.4); }
+  .date-selector { margin-top: 14px; display: flex; align-items: center; gap: 10px; }
+  .date-selector label { font-size: 13px; opacity: 0.85; }
+  .date-selector select {
+    padding: 6px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.15); color: #fff; font-size: 13px; cursor: pointer; outline: none;
+  }
+  .date-selector select option { color: #1a1b1c; background: #fff; }
+  .header-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 20px; }
+  .hstat .label { font-size: 11px; opacity: 0.7; }
+  .hstat .value { font-size: 20px; font-weight: 700; margin-top: 2px; }
+  .hstat .value.up { color: #68d391; }
+  .hstat .value.down { color: #fc8181; }
+  .section { background: #fff; border-radius: 12px; padding: 22px 26px; margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .section h2 { font-size: 16px; font-weight: 700; color: #0f2c4d; margin-bottom: 14px; padding-left: 10px; border-left: 3px solid #1a4a7a; }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
+  .dash-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; text-align: center; position: relative; }
+  .dash-card .dim-name { font-size: 12px; color: #718096; font-weight: 500; }
+  .dash-card .dim-score { font-size: 26px; font-weight: 700; margin: 6px 0; }
+  .dash-card .dim-signal { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+  .signal-bull { background: #c6f6d5; color: #22543d; }
+  .signal-bear { background: #fed7d7; color: #742a2a; }
+  .signal-neutral { background: #fefcbf; color: #744210; }
+  .dash-card .weight { position: absolute; top: 8px; right: 10px; font-size: 10px; color: #a0aec0; }
+  .score-bar-wrap { margin-top: 16px; }
+  .score-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: #718096; margin-bottom: 6px; }
+  .score-bar { height: 22px; background: linear-gradient(to right, #fc8181 0%, #f6e05e 50%, #68d391 100%); border-radius: 11px; position: relative; }
+  .score-pointer { position: absolute; top: -4px; width: 4px; height: 30px; background: #1a202c; border-radius: 2px; transform: translateX(-50%); }
+  .score-pointer::after { content: attr(data-score); position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: #1a202c; white-space: nowrap; }
+  .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 8px; }
+  .compare-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; }
+  .compare-card .c-label { font-size: 11px; color: #718096; }
+  .compare-card .c-values { display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px; }
+  .compare-card .c-prev { font-size: 13px; color: #a0aec0; text-decoration: line-through; }
+  .compare-card .c-curr { font-size: 18px; font-weight: 700; }
+  .compare-card .c-change { font-size: 12px; font-weight: 600; margin-top: 4px; padding: 2px 8px; border-radius: 8px; display: inline-block; }
+  .c-change.improved { background: #c6f6d5; color: #22543d; }
+  .c-change.deteriorated { background: #fed7d7; color: #742a2a; }
+  .c-change.unchanged { background: #edf2f7; color: #4a5568; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #edf2f7; }
+  th { background: #f7fafc; font-weight: 600; color: #2d3748; font-size: 12px; }
+  tr:hover { background: #f7fafc; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .signal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .dot-bull { background: #48bb78; }
+  .dot-bear { background: #f56565; }
+  .dot-neutral { background: #ecc94b; }
+  .up { color: #c53030; font-weight: 600; }
+  .down { color: #2f855a; font-weight: 600; }
+  .dim-group td { background: #ebf4ff; font-weight: 600; color: #2c5282; font-size: 12px; }
+  .event-item { padding: 10px 14px; border-left: 3px solid #1a4a7a; background: #f7fafc; border-radius: 0 8px 8px 0; margin-bottom: 10px; font-size: 13px; }
+  .event-item .event-title { font-weight: 600; color: #1a202c; }
+  .event-item .event-desc { color: #4a5568; margin-top: 3px; font-size: 12px; }
+  .event-item.bull { border-left-color: #48bb78; }
+  .event-item.bear { border-left-color: #f56565; }
+  .watch-list { list-style: none; }
+  .watch-list li { padding: 8px 0; border-bottom: 1px dashed #e2e8f0; font-size: 13px; color: #2d3748; }
+  .watch-list li::before { content: "▸ "; color: #1a4a7a; font-weight: 700; }
+  .conclusion { background: linear-gradient(135deg, #fffff0 0%, #fefcbf 100%); border: 1px solid #ecc94b; border-radius: 10px; padding: 16px 20px; margin-top: 12px; }
+  .conclusion h3 { font-size: 14px; color: #744210; margin-bottom: 8px; }
+  .conclusion p { font-size: 13px; color: #2d3748; line-height: 1.8; }
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; color: #718096; margin-top: 10px; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .footer { text-align: center; font-size: 11px; color: #a0aec0; padding: 16px 0; }
+  .data-note { font-size: 11px; color: #a0aec0; margin-top: 8px; font-style: italic; }
+  .no-prev { text-align: center; padding: 30px; color: #a0aec0; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>银行股涨跌监测日报</h1>
+        <div class="date" id="reportDate">2026年9月15日 星期二</div>
+      </div>
+      <span class="badge neutral" id="signalBadge">综合信号：中性</span>
+    </div>
+    <div class="date-selector">
+      <label>📅 切换日期：</label>
+      <select id="dateSelect" onchange="switchDate(this.value)">
+        <option value="2026-09-14">2026年9月14日（周一）</option>
+        <option value="2026-09-15">2026年9月15日（周二）</option>
+        <option value="2026-09-16">2026年9月16日（周三）</option>
+        <option value="2026-09-17">2026年9月17日（周四）</option>
+        <option value="2026-09-18" selected>2026年9月18日（周五）</option>
+      </select>
+      <span style="font-size:11px;opacity:0.6;" id="dataDateNote">行情数据截至9月14日收盘</span>
+    </div>
+    <div class="header-stats">
+      <div class="hstat"><div class="label">银行行业指数</div><div class="value up" id="statIndex">+0.83%</div></div>
+      <div class="hstat"><div class="label">板块平均PB(LF)</div><div class="value" id="statPB">~0.68</div></div>
+      <div class="hstat"><div class="label">板块平均股息率</div><div class="value" id="statDividend">~5.2%</div></div>
+      <div class="hstat"><div class="label">主力资金</div><div class="value down" id="statFund">净流出8.38亿</div></div>
+      <div class="hstat"><div class="label">10年期国债收益率</div><div class="value" id="statBond">1.686%</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>六维信号仪表盘</h2>
+    <div class="dash-grid" id="dashGrid"></div>
+    <div class="score-bar-wrap">
+      <div class="score-bar-label">
+        <span>← 看空 0</span>
+        <span id="scoreLabel">综合评分：54.6 / 100（中性）</span>
+        <span>100 看多 →</span>
+      </div>
+      <div class="score-bar"><div class="score-pointer" id="scorePointer" data-score="54.6分" style="left:54.6%;"></div></div>
+    </div>
+    <div class="legend">
+      <span><span class="signal-dot dot-bull"></span>偏多（评分≥60）</span>
+      <span><span class="signal-dot dot-neutral"></span>中性（40-59）</span>
+      <span><span class="signal-dot dot-bear"></span>偏空（≤39）</span>
+      <span>综合评分 = Σ(维度评分 × 权重)</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>与前日对比</h2>
+    <div id="compareContent"></div>
+  </div>
+
+  <div class="section">
+    <h2>分项指标明细</h2>
+    <table id="detailTable">
+      <thead><tr><th>指标</th><th class="num">最新值</th><th class="num">较上期</th><th>频率</th><th>信号</th><th>解读</th></tr></thead>
+      <tbody id="detailBody"></tbody>
+    </table>
+    <div class="data-note" id="dataNote"></div>
+  </div>
+
+  <div class="section">
+    <h2>当日重点事件</h2>
+    <div id="eventList"></div>
+  </div>
+
+  <div class="section">
+    <h2>综合判断与明日关注</h2>
+    <div class="conclusion">
+      <h3 id="conclusionTitle">📌 今日结论</h3>
+      <p id="conclusionText"></p>
+    </div>
+    <h3 style="margin-top:18px;font-size:14px;color:#0f2c4d;">明日重点关注</h3>
+    <ul class="watch-list" id="watchList"></ul>
+  </div>
+
+  <div class="section">
+    <h2>指标体系说明</h2>
+    <table>
+      <thead><tr><th>维度</th><th>核心逻辑</th><th>关键指标</th><th>数据源</th></tr></thead>
+      <tbody>
+        <tr><td><strong>经济基本面</strong></td><td>决定信贷需求与企业还款能力</td><td>PMI、社融、企业中长贷、工业利润</td><td>国家统计局、央行</td></tr>
+        <tr><td><strong>净息差</strong></td><td>决定银行盈利核心</td><td>LPR、10年国债、行业息差、存款利率</td><td>央行、中国货币网、金融监管总局</td></tr>
+        <tr><td><strong>资产质量</strong></td><td>决定坏账拨备压力</td><td>地产成交、不良率、关注类贷款、地方债</td><td>中指院、金融监管总局、Wind</td></tr>
+        <tr><td><strong>货币流动性</strong></td><td>决定资金成本与投放能力</td><td>DR007、公开市场操作、存准率</td><td>央行、全国银行间同业拆借中心</td></tr>
+        <tr><td><strong>市场风格资金</strong></td><td>决定短期涨跌</td><td>银行指数、ETF资金、北向、PB、股息率</td><td>Wind、交易所、基金公司</td></tr>
+        <tr><td><strong>政策事件</strong></td><td>突发催化或冲击</td><td>监管政策、重要会议、降准降息</td><td>国务院、央行、金融监管总局</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;font-size:11px;color:#a0aec0;line-height:1.8;">
+      <strong>评分规则：</strong>每个指标根据阈值判定偏多(+1)/中性(0)/偏空(-1)，维度内加权平均后映射为0-100分；综合评分 = Σ(维度评分×权重)。≥60偏多，40-59中性，≤39偏空。<br>
+      <strong>数据来源：</strong>国家统计局、中国人民银行、国家金融监督管理总局、中国货币网、证券时报、上海证券报、同花顺iFinD、Wind资讯。<br>
+      <strong>免责声明：</strong>本日报由AI自动生成，仅供研究参考，不构成任何投资建议。投资有风险，入市需谨慎。
+    </div>
+  </div>
+
+  <div class="footer">银行股涨跌监测日报 · 六维指标体系 · 每日10:00自动生成</div>
+</div>
+
+<script>
+var dailyData = {
+  "2026-09-14": {
+    dateLabel: "2026年9月14日 星期一",
+    dataDateNote: "行情数据截至9月11日收盘（周五）",
+    signal: "中性", signalClass: "neutral",
+    totalScore: 50.8,
+    stats: {
+      index: "-0.43%", indexClass: "down",
+      pb: "~0.67", dividend: "~5.2%",
+      fund: "净流出约5亿", fundClass: "down",
+      bond: "1.685%"
+    },
+    scores: [
+      { name: "经济基本面", score: 46, signal: "中性偏空", cls: "neutral", weight: "25%" },
+      { name: "净息差", score: 55, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 45, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 55, signal: "中性", cls: "neutral", weight: "15%" },
+      { name: "市场风格资金", score: 55, signal: "中性偏多", cls: "neutral", weight: "10%" },
+      { name: "政策事件", score: 55, signal: "中性偏多", cls: "neutral", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月10日",
+      items: [
+        { label: "银行行业指数", prev: "+1.53%", curr: "-0.43%", change: "回落1.96pct", cls: "deteriorated" },
+        { label: "10年期国债收益率", prev: "1.682%", curr: "1.685%", change: "+3bp", cls: "improved" },
+        { label: "DR007", prev: "~1.40%", curr: "1.42%", change: "+2bp", cls: "deteriorated" },
+        { label: "公开市场净投放", prev: "+30亿", curr: "+40亿", change: "+10亿", cls: "improved" },
+        { label: "综合评分", prev: "~53", curr: "50.8", change: "-2.2分", cls: "deteriorated" },
+        { label: "主力资金流向", prev: "净流入", curr: "净流出约5亿", change: "转流出", cls: "deteriorated" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分46，中性偏空" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50，大企业PMI 50.6%已扩张" },
+      { name: "社融存量同比", value: "~7.5%", change: "—", freq: "月度(7月末)", signal: "neutral", desc: "8月金融数据尚未发布，使用7月数据，融资需求平稳" },
+      { name: "企业中长期贷款", value: "数据待发布", change: "—", freq: "月度(8月)", signal: "neutral", desc: "8月金融数据将于9月14日发布" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润保持较快增长但增速连续放缓，7月单月+11.2%" },
+      { group: "💰 二、净息差（权重25%）— 评分55，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "持平", freq: "月度(8月20日)", signal: "neutral", desc: "连续15个月不变，资产端收益率企稳" },
+      { name: "5年期LPR", value: "3.50%", change: "持平", freq: "月度(8月20日)", signal: "neutral", desc: "连续15个月不变，按揭利率稳定" },
+      { name: "10年期国债收益率", value: "1.685%", change: "+1bp", freq: "日度(9/11)", signal: "neutral", desc: "低位微升，债券投资收益边际改善" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "二季度净息差四年来首次回升，息差拐点信号明确" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分45，偏空" },
+      { name: "30城新房成交同比", value: "+6.89%", change: "环比+20.8%", freq: "周度(第36周)", signal: "neutral", desc: "第36周(8.31-9.6)成交回升同比转正，累计仍负增长" },
+      { name: "二手房成交", value: "同比+7.4%", change: "—", freq: "月度(8月)", signal: "bull", desc: "百城二手房成交量同比增长7.4%，重点城市活跃" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行，关注类贷款率2.21%环比+4bps" },
+      { name: "国有大行不良率", value: "1.21%", change: "-1bp", freq: "季度(Q2末)", signal: "bull", desc: "唯一环比改善的银行类型，城商行/农商行不良率上升" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分55，中性" },
+      { name: "DR007", value: "1.42%", change: "+5bp", freq: "日度(9/11)", signal: "neutral", desc: "围绕政策利率(1.4%)小幅波动，流动性均衡" },
+      { name: "公开市场操作", value: "净投放40亿", change: "—", freq: "日度(9/11)", signal: "neutral", desc: "开展40亿7天逆回购，小额净投放维护流动性" },
+      { name: "隔夜逆回购预告", value: "9/14-17开展", change: "—", freq: "事件(9/10)", signal: "bull", desc: "央行预告9月14-17日开展隔夜逆回购，每日不超6000亿" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "处于历史低位，降准空间有限" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分55，中性偏多" },
+      { name: "银行行业指数", value: "-0.43%", change: "—", freq: "日度(9/11)", signal: "bear", desc: "申万银行指数下跌0.43%，但板块连续五周收涨" },
+      { name: "主力资金流向", value: "净流出约5亿", change: "—", freq: "日度(9/11)", signal: "bear", desc: "招商银行净流出1.96亿居首，上涨后获利回吐" },
+      { name: "板块平均PB", value: "~0.67", change: "—", freq: "日度(9/11)", signal: "bull", desc: "处于历史极低估值区间" },
+      { name: "板块平均股息率", value: "~5.2%", change: "—", freq: "日度(9/11)", signal: "bull", desc: "显著高于10年国债，防御配置价值突出" },
+      { group: "📋 六、政策事件（权重5%）— 评分55，中性偏多" },
+      { name: "央行隔夜逆回购预告", value: "9/14-17开展", change: "—", freq: "事件(9/10)", signal: "bull", desc: "提前预告大额隔夜逆回购，呵护季末流动性" },
+      { name: "8月金融数据待发布", value: "9月14日", change: "—", freq: "预期", signal: "neutral", desc: "市场关注8月社融和信贷数据，预期偏弱" }
+    ],
+    events: [
+      { type: "bull", title: "✅ 央行预告9月14-17日开展隔夜逆回购操作", desc: "9月10日央行公告将在9月14日至17日开展隔夜逆回购操作，采用固定利率、数量招标，每日操作量不超过6000亿元，提前呵护季末流动性。" },
+      { type: "bear", title: "⚠️ 银行板块9月11日回调0.43%，结束连续上涨", desc: "申万银行指数下跌0.43%，招商银行-0.53%净流出1.96亿。但板块已连续五周收涨，多家银行创出历史新高，高股息避险逻辑持续生效。" },
+      { type: "bull", title: "✅ 二季度商业银行净息差1.41%，四年来首次回升", desc: "金融监管总局数据显示二季度末净息差1.41%较一季度回升，为四年来首次改善。国有大行不良率1.21%环比下降1bp。" },
+      { type: "neutral", title: "📋 8月金融数据将于9月14日发布", desc: "市场关注8月社融和信贷数据，分析师预期企业中长期贷款可能偏弱，关注政策应对。" }
+    ],
+    conclusion: "六维指标呈现\"低估值高股息+流动性预期\"与\"基本面待验证+资产质量压力\"的平衡格局。多头力量来自：央行提前预告隔夜逆回购呵护流动性、二季度净息差四年来首次回升、板块PB仅0.67倍+股息率5.2%、连续五周收涨。空头压力来自：8月金融数据待发布市场预期偏弱、商业银行不良率连续两季上行、9月11日板块回调伴随资金流出。短期银行股大概率维持高位震荡，关注9月14日8月金融数据落地情况。",
+    watch: [
+      "9月14日8月金融统计数据发布（社融、信贷、M2）",
+      "央行9月14-17日隔夜逆回购实际操作量与DR007走势",
+      "银行板块能否止跌企稳，关注工商银行、招商银行支撑位",
+      "房地产销售高频数据（第37周30城成交）",
+      "9月LPR报价窗口（9月21日）前的政策预期变化"
+    ]
+  },
+
+  "2026-09-15": {
+    dateLabel: "2026年9月15日 星期二",
+    dataDateNote: "行情数据截至9月14日收盘（周一）",
+    signal: "中性", signalClass: "neutral",
+    totalScore: 54.6,
+    stats: {
+      index: "+0.83%", indexClass: "up",
+      pb: "~0.68", dividend: "~5.2%",
+      fund: "净流出8.38亿", fundClass: "down",
+      bond: "1.686%"
+    },
+    scores: [
+      { name: "经济基本面", score: 48, signal: "中性偏空", cls: "neutral", weight: "25%" },
+      { name: "净息差", score: 58, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 68, signal: "偏多", cls: "bull", weight: "15%" },
+      { name: "市场风格资金", score: 62, signal: "中性偏多", cls: "neutral", weight: "10%" },
+      { name: "政策事件", score: 65, signal: "偏多", cls: "bull", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月14日日报",
+      items: [
+        { label: "银行行业指数", prev: "-0.43%", curr: "+0.83%", change: "改善+1.26pct", cls: "improved" },
+        { label: "10年期国债收益率", prev: "1.685%", curr: "1.686%", change: "+1bp", cls: "improved" },
+        { label: "DR007", prev: "1.42%", curr: "1.415%", change: "-0.5bp", cls: "improved" },
+        { label: "公开市场净投放", prev: "+40亿", curr: "+5035亿", change: "大幅增加", cls: "improved" },
+        { label: "综合评分", prev: "50.8", curr: "54.6", change: "+3.8分", cls: "improved" },
+        { label: "主力资金流向", prev: "净流出约5亿", curr: "净流出8.38亿", change: "流出扩大", cls: "deteriorated" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分48，中性偏空" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50，大企业PMI 50.6%已扩张" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量23.91万亿，同比少2.64万亿，融资需求偏弱" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "8月企业中长贷再现负增长，为历史第四次，企业投资意愿不足" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润保持较快增长但增速连续3个月放缓，7月单月+11.2%" },
+      { group: "💰 二、净息差（权重25%）— 评分58，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "持平", freq: "月度(8月20日)", signal: "neutral", desc: "连续15个月不变，资产端收益率企稳" },
+      { name: "5年期LPR", value: "3.50%", change: "持平", freq: "月度(8月20日)", signal: "neutral", desc: "连续15个月不变，按揭利率稳定，存量重定价压力缓释" },
+      { name: "10年期国债收益率", value: "1.686%", change: "+1bp", freq: "日度(9/14)", signal: "neutral", desc: "低位微升，债券投资收益边际改善但空间有限" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "二季度净息差1.41%，四年来首次回升，息差拐点信号明确" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空" },
+      { name: "30城新房成交同比", value: "+6.89%", change: "环比+20.8%", freq: "周度(第36周)", signal: "neutral", desc: "第36周成交回升同比转正，但1-8月累计销售面积仍同比-12.1%" },
+      { name: "二手房成交", value: "同比+7.4%", change: "—", freq: "月度(8月)", signal: "bull", desc: "百城二手房成交量同比增长7.4%，重点城市活跃度较高" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行，关注类贷款率2.21%环比+4bps" },
+      { name: "国有大行不良率", value: "1.21%", change: "-1bp", freq: "季度(Q2末)", signal: "bull", desc: "唯一环比改善的银行类型，城商行/农商行不良率分别上升2/4bps" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分68，偏多" },
+      { name: "DR007", value: "1.4147%", change: "-0.8bp", freq: "日度(9/14)", signal: "neutral", desc: "接近7天逆回购政策利率(1.4%)，流动性合理充裕" },
+      { name: "公开市场操作", value: "净投放5035亿", change: "—", freq: "日度(9/14)", signal: "bull", desc: "开展5040亿隔夜逆回购，9月15日再开展5970亿" },
+      { name: "买断式逆回购续做", value: "5000亿(等量)", change: "—", freq: "事件(9/15)", signal: "bull", desc: "央行等量续做6个月期买断式逆回购，维护中长期流动性充裕" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "处于历史低位，进一步降准空间有限但仍存预期" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分62，中性偏多" },
+      { name: "银行行业指数", value: "+0.83%", change: "—", freq: "日度(9/14)", signal: "bull", desc: "38只上涨仅2只下跌，交通银行+1.87%领涨，工行+1.36%" },
+      { name: "主力资金流向", value: "净流出8.38亿", change: "—", freq: "日度(9/14)", signal: "bear", desc: "上涨伴随资金流出，招商银行净流出1.88亿居首" },
+      { name: "板块平均PB", value: "~0.68", change: "—", freq: "日度(9/14)", signal: "bull", desc: "处于历史极低估值区间，交通银行0.58、民生银行0.28" },
+      { name: "板块平均股息率", value: "~5.2%", change: "—", freq: "日度(9/14)", signal: "bull", desc: "显著高于10年国债(1.686%)，防御配置价值突出" },
+      { group: "📋 六、政策事件（权重5%）— 评分65，偏多" },
+      { name: "8月金融数据发布", value: "社融7.2%/M2 7.5%", change: "—", freq: "事件(9/14)", signal: "neutral", desc: "信贷需求偏弱，企业中长贷负增长，市场关注后续政策应对" },
+      { name: "央行流动性呵护", value: "大额逆回购+续做", change: "—", freq: "事件(9/15)", signal: "bull", desc: "连续大额投放+等量续做买断式逆回购，维护季末流动性平稳" },
+      { name: "降准降息预期", value: "市场预期升温", change: "—", freq: "预期", signal: "bull", desc: "8月信贷数据偏弱后，市场对后续降准降息预期有所升温" }
+    ],
+    events: [
+      { type: "bull", title: "✅ 央行等量续做5000亿元6个月期买断式逆回购", desc: "9月15日央行开展5000亿元6个月期买断式逆回购操作（等量续做），同时开展5970亿元隔夜逆回购，7天期逆回购操作量为零。季末流动性呵护态度明确。" },
+      { type: "bear", title: "⚠️ 8月企业中长期贷款再现负增长（-80亿元）", desc: "央行9月14日发布8月金融数据，企业中长期贷款负增长80亿元，为2012年以来第四次出现负增长。前8月社融增量23.91万亿，同比少2.64万亿，融资需求偏弱。" },
+      { type: "bull", title: "✅ 二季度商业银行净息差1.41%，四年来首次回升", desc: "二季度末商业银行净息差1.41%较一季度回升，为四年来首次改善。国有大行不良率1.21%环比下降1bp，为唯一改善类型。" },
+      { type: "bear", title: "⚠️ 商业银行不良率连续两季上行至1.52%", desc: "二季度末商业银行不良贷款率1.52%，较上季末上升0.01个百分点，已连续两个季度小幅上行。关注类贷款率2.21%环比上升4bps。" }
+    ],
+    conclusion: "六维指标呈现\"流动性宽松+估值低位\"与\"基本面偏弱+资产质量边际恶化\"的多空交织格局。多头力量来自：央行持续大额流动性投放（净投放5035亿+等量续做5000亿）、二季度净息差四年来首次回升至1.41%、银行板块PB仅0.68倍+股息率5.2%提供安全边际、降准降息预期升温。空头压力来自：8月企业中长期贷款再现负增长（-80亿）、社融增量同比少2.64万亿、商业银行不良率连续两季上行至1.52%、板块上涨伴随主力资金净流出8.38亿。短期银行股大概率维持震荡整理走势，低估值高股息提供下行保护，关注国有大行防御配置价值。",
+    watch: [
+      "9月15日银行板块收盘表现与资金流向，确认上涨持续性",
+      "央行公开市场操作量与DR007走势，关注季末资金面变化",
+      "房地产销售高频数据（第37周30城成交），验证回暖可持续性",
+      "9月LPR报价窗口（9月21日）前的政策预期变化",
+      "重点银行股技术面：工商银行(8.22元)、招商银行(41.83元)能否站稳短期均线"
+    ]
+  },
+
+  "2026-09-16": {
+    dateLabel: "2026年9月16日 星期三",
+    dataDateNote: "行情数据截至9月15日收盘（周二）",
+    signal: "中性", signalClass: "neutral",
+    totalScore: 51.4,
+    stats: {
+      index: "-1.24%", indexClass: "down",
+      pb: "~0.68", dividend: "~5.2%",
+      fund: "净流出15.79亿", fundClass: "down",
+      bond: "1.686%"
+    },
+    scores: [
+      { name: "经济基本面", score: 45, signal: "偏空", cls: "bear", weight: "25%" },
+      { name: "净息差", score: 56, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 65, signal: "偏多", cls: "bull", weight: "15%" },
+      { name: "市场风格资金", score: 50, signal: "中性", cls: "neutral", weight: "10%" },
+      { name: "政策事件", score: 60, signal: "偏多", cls: "bull", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月15日日报",
+      items: [
+        { label: "银行行业指数", prev: "+0.83%", curr: "-1.24%", change: "回落2.07pct", cls: "deteriorated" },
+        { label: "10年期国债收益率", prev: "1.686%", curr: "1.686%", change: "持平", cls: "unchanged" },
+        { label: "DR007", prev: "1.415%", curr: "1.41%", change: "-0.5bp", cls: "improved" },
+        { label: "公开市场净投放", prev: "+5035亿", curr: "+5920亿", change: "增加885亿", cls: "improved" },
+        { label: "综合评分", prev: "54.6", curr: "51.4", change: "-3.2分", cls: "deteriorated" },
+        { label: "主力资金流向", prev: "净流出8.38亿", curr: "净流出15.79亿", change: "流出扩大7.41亿", cls: "deteriorated" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分45，偏空" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50，大企业PMI 50.6%已扩张" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量23.91万亿，同比少2.64万亿，融资需求偏弱" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "历史第四次单月负增长，企业投资意愿不足，宽信用传导不畅" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润保持较快增长但增速连续3个月放缓，7月单月+11.2%" },
+      { group: "💰 二、净息差（权重25%）— 评分56，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "持平", freq: "月度(9月20日待报价)", signal: "neutral", desc: "连续15个月不变，9月21日新一轮报价窗口临近" },
+      { name: "5年期LPR", value: "3.50%", change: "持平", freq: "月度(9月20日待报价)", signal: "neutral", desc: "连续15个月不变，按揭利率稳定，存量重定价压力缓释" },
+      { name: "10年期国债收益率", value: "1.686%", change: "持平", freq: "日度(9/15)", signal: "neutral", desc: "低位震荡，国债期货10年期主力合约涨0.08%，债市情绪偏暖" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "二季度净息差四年来首次回升，息差拐点信号明确" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第37周(9.7-9.13)30城新房成交139.5万平，金九开局遇冷" },
+      { name: "一线城市新房成交", value: "+14.2%", change: "同比正增", freq: "周度(第37周)", signal: "bull", desc: "一线城市成交51.8万平同比+14.2%，但三四线拖累整体" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行，关注类贷款率2.21%环比+4bps" },
+      { name: "国有大行不良率", value: "1.21%", change: "-1bp", freq: "季度(Q2末)", signal: "bull", desc: "唯一环比改善的银行类型，城商行/农商行不良率上升" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分65，偏多" },
+      { name: "DR007", value: "1.41%", change: "持平", freq: "日度(9/15)", signal: "neutral", desc: "DR001和DR007加权均值均为1.41%，7d repo fixing 1.43%(+1bp)" },
+      { name: "公开市场操作", value: "净投放5920亿", change: "大额投放", freq: "日度(9/15)", signal: "bull", desc: "5970亿隔夜逆回购+5000亿买断式逆回购，逆回购口径净投放920亿" },
+      { name: "买断式逆回购续做", value: "5000亿(等量)", change: "—", freq: "事件(9/15)", signal: "bull", desc: "央行等量续做6个月期买断式逆回购，维护中长期流动性充裕" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "处于历史低位，8月金融数据偏弱后降准预期有所升温" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分50，中性" },
+      { name: "银行行业全收益指数", value: "-1.24%", change: "—", freq: "日度(9/15)", signal: "bear", desc: "42只银行股41只下跌，仅中信银行+0.45%，浦发银行-2.34%领跌" },
+      { name: "主力资金流向", value: "净流出15.79亿", change: "流出扩大", freq: "日度(9/15)", signal: "bear", desc: "工商银行净卖出1.06亿居首，北京银行净流入5549万逆势吸金" },
+      { name: "银行ETF份额", value: "减少750万份", change: "—", freq: "日度(9/15)", signal: "bear", desc: "银行ETF易方达(516310)份额降至15.27亿份，资金借道ETF流出" },
+      { name: "板块平均PB", value: "~0.68", change: "—", freq: "日度(9/15)", signal: "bull", desc: "处于历史极低估值区间，民生银行0.27、华夏银行0.31、浦发0.41" },
+      { name: "板块平均股息率", value: "~5.2%", change: "—", freq: "日度(9/15)", signal: "bull", desc: "显著高于10年国债(1.686%)，防御配置价值突出，息差超350bp" },
+      { group: "📋 六、政策事件（权重5%）— 评分60，偏多" },
+      { name: "央行买断式逆回购续做", value: "5000亿", change: "等量续做", freq: "事件(9/15)", signal: "bull", desc: "6个月期买断式逆回购等量续做，体现呵护中长期流动性的政策态度" },
+      { name: "潘功胜《求是》发文", value: "货币政策框架转型", change: "—", freq: "事件(9/16)", signal: "bull", desc: "强调淡化数量目标、注重价格型调控，丰富宏观审慎工具箱维护市场稳定" },
+      { name: "美国10年期国债收益率", value: "突破5%", change: "外部压力", freq: "事件(9/15)", signal: "bear", desc: "美债收益率突破5%创2023年10月以来新高，中东地缘冲突推升油价通胀" }
+    ],
+    events: [
+      { type: "bull", title: "✅ 央行等量续做5000亿元6个月期买断式逆回购", desc: "9月15日央行开展5000亿元6个月期买断式逆回购操作（等量续做），同时开展5970亿元隔夜逆回购，7天期逆回购操作量为零。当日含买断式口径净投放5920亿元，季末流动性呵护态度明确。" },
+      { type: "bear", title: "⚠️ 银行板块普跌1.24%，41只个股飘绿，主力净流出15.79亿", desc: "9月15日银行板块跌幅居申万一级行业第三，42只成份股仅中信银行收涨。浦发银行-2.34%领跌，招商银行-1.75%、建设银行-1.62%。工商银行主力净卖出1.06亿元，银行ETF份额减少750万份。" },
+      { type: "bull", title: "✅ 潘功胜《求是》发文：持续推进货币政策框架转型，维护金融市场稳定", desc: "9月16日《求是》刊发央行行长潘功胜署名文章，提出淡化对贷款单一渠道的数量目标关注，更加注重价格型调控；丰富宏观审慎管理工具箱，维护股市、债市、汇市平稳运行。" },
+      { type: "bear", title: "⚠️ 美国10年期国债收益率突破5%，创2023年10月以来新高", desc: "受中东地缘冲突推升油价（WTI突破106美元/桶）、美国通胀担忧及政府债务扩张影响，美国10年期国债收益率9月15日收报5.005%，30年期升至5.378%。外部利率高企对国内货币政策空间形成一定制约。" },
+      { type: "bear", title: "⚠️ 金九开局遇冷：第37周30城新房成交同比-6.4%", desc: "第37周(9.7-9.13)30城新房成交面积139.5万平，同比下降6.4%；35城成交149万平，环比-11%、同比-10%，较年内周均低21%。购房者观望情绪较重，政策效应向实际成交传导节奏偏慢。" }
+    ],
+    conclusion: "六维指标呈现流动性宽松+政策呵护+低估值高股息与基本面偏弱+资产质量边际恶化+外部利率高企的多空交织格局。多头力量来自：央行持续大额流动性投放（净投放5920亿+等量续做5000亿买断式逆回购）、潘功胜发文强调维护金融市场稳定、二季度净息差四年来首次回升至1.41%、银行板块PB仅0.68倍+股息率5.2%提供安全边际。空头压力来自：8月企业中长期贷款再现负增长（-80亿）、社融增量同比少2.64万亿、金九开局遇冷（30城新房成交同比-6.4%）、商业银行不良率连续两季上行至1.52%、美国10年期国债收益率突破5%制约国内政策空间、银行板块主力资金净流出15.79亿。短期银行股大概率维持震荡整理走势，低估值高股息提供下行保护，国有大行防御配置价值相对突出，关注9月21日LPR报价窗口及后续降准预期变化。",
+    watch: [
+      "9月16日银行板块能否止跌企稳，关注工商银行(8.13元)、招商银行(41.10元)支撑位",
+      "央行公开市场操作量与DR007走势，9月16日已开展1100亿7天逆回购+6000亿隔夜逆回购，净投放1130亿",
+      "9月21日LPR报价窗口临近，关注8月弱信贷数据后是否触发5年期LPR下调",
+      "房地产销售高频数据（第38周30城成交），验证金九是否持续偏弱",
+      "美国国债收益率走势及中东地缘冲突发展，关注外部利率对国内政策的制约",
+      "降准预期变化：8月金融数据偏弱后，市场对四季度降准的预期是否升温"
+    ]
+  },
+
+  "2026-09-17": {
+    dateLabel: "2026年9月17日 星期四",
+    dataDateNote: "行情数据截至当日收盘（15:00）",
+    signal: "中性", signalClass: "neutral",
+    totalScore: 50.4,
+    stats: {
+      index: "-0.30%", indexClass: "down",
+      pb: "~0.68", dividend: "~5.2%",
+      fund: "净流出1.71亿", fundClass: "down",
+      bond: "1.684%"
+    },
+    scores: [
+      { name: "经济基本面", score: 45, signal: "偏空", cls: "bear", weight: "25%" },
+      { name: "净息差", score: 58, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 60, signal: "偏多", cls: "bull", weight: "15%" },
+      { name: "市场风格资金", score: 50, signal: "中性", cls: "neutral", weight: "10%" },
+      { name: "政策事件", score: 45, signal: "偏空", cls: "bear", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月16日日报",
+      items: [
+        { label: "银行行业指数", prev: "-0.67%", curr: "-0.30%", change: "跌幅收窄0.37pct", cls: "improved" },
+        { label: "10年期国债收益率", prev: "1.685%", curr: "1.684%", change: "-0.08bp", cls: "improved" },
+        { label: "DR007", prev: "~1.42%", curr: "~1.45%", change: "+3bp", cls: "deteriorated" },
+        { label: "公开市场净投放", prev: "+1130亿", curr: "+1590亿", change: "增加460亿", cls: "improved" },
+        { label: "综合评分", prev: "50.7", curr: "50.4", change: "-0.3分", cls: "deteriorated" },
+        { label: "主力资金流向", prev: "净流出3.52亿", curr: "净流出1.71亿", change: "流出继续收窄", cls: "improved" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分45，偏空" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50，大企业PMI 50.6%已扩张" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量23.91万亿，同比少2.64万亿，融资需求偏弱" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "历史第四次单月负增长，企业投资意愿不足，宽信用传导不畅" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润保持较快增长但增速连续3个月放缓，7月单月+11.2%" },
+      { group: "💰 二、净息差（权重25%）— 评分58，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "持平", freq: "月度(9月21日待报价)", signal: "neutral", desc: "连续15个月不变，9月21日新一轮报价窗口临近" },
+      { name: "5年期LPR", value: "3.50%", change: "持平", freq: "月度(9月21日待报价)", signal: "neutral", desc: "连续15个月不变，美联储加息后国内降息空间受限" },
+      { name: "10年期国债收益率", value: "1.684%", change: "-0.08bp", freq: "日度(9/17)", signal: "neutral", desc: "活跃券260016收益率下行0.09bp报1.6806%，债市窄幅震荡" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "二季度净息差四年来首次回升，息差拐点信号明确" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第37周(9.7-9.13)30城新房成交139.5万平，金九开局遇冷" },
+      { name: "8月70城房价", value: "一线环比+0.1%", change: "由平转涨", freq: "月度(8月)", signal: "neutral", desc: "一线城市新房环比由持平转涨0.1%，北京环比-0.2%唯一下行" },
+      { name: "二手房网签面积", value: "同比+10.6%", change: "持续正增", freq: "月度(1-8月)", signal: "bull", desc: "1-8月二手房网签面积5.5亿平同比+10.6%，二手成交占比创新高" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行，关注类贷款率2.21%环比+4bps" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分60，偏多" },
+      { name: "DR007", value: "~1.45%", change: "+3bp", freq: "日度(9/17)", signal: "neutral", desc: "DR007升至1.45%上方，资金面较前日小幅收敛，季末临近" },
+      { name: "公开市场操作", value: "净投放1590亿", change: "较前日增加", freq: "日度(9/17)", signal: "bull", desc: "1620亿7天逆回购(利率1.40%)+6000亿隔夜逆回购，到期6030亿，净投放1590亿" },
+      { name: "7天逆回购利率", value: "1.40%", change: "持平", freq: "日度(9/17)", signal: "neutral", desc: "连续两日开展7天期逆回购操作，利率维持1.40%不变" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "处于历史低位，美联储加息后降准预期有所降温" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分50，中性" },
+      { name: "银行行业全收益指数", value: "-0.30%", change: "跌幅继续收窄", freq: "日度(9/17)", signal: "bear", desc: "连续两日下跌但跌幅收窄，国有大行+0.24%逆势上涨，建设银行+0.55%领涨" },
+      { name: "主力资金(国有大行)", value: "净流出1.71亿", change: "流出收窄", freq: "日度(9/17)", signal: "neutral", desc: "国有大行板块主力净流出1.71亿，建设银行领涨，南京银行-1.42%拖累" },
+      { name: "个股表现", value: "涨少跌多", change: "—", freq: "日度(9/17)", signal: "neutral", desc: "宁波银行+0.82%、中信银行+0.79%、建设银行+0.55%；南京银行-1.42%、北京银行-1.06%" },
+      { name: "板块平均PB", value: "~0.68", change: "—", freq: "日度(9/17)", signal: "bull", desc: "处于历史极低估值区间，科技股大涨下资金分流但银行防御属性仍在" },
+      { name: "板块平均股息率", value: "~5.2%", change: "—", freq: "日度(9/17)", signal: "bull", desc: "显著高于10年国债(1.684%)，股息率差352bps，防御配置价值突出" },
+      { group: "📋 六、政策事件（权重5%）— 评分45，偏空" },
+      { name: "美联储加息消化", value: "加息已落地", change: "—", freq: "事件(9/17)", signal: "bear", desc: "美联储加息25bp落地后市场消化中，点阵图显示年内还将加息一次" },
+      { name: "香港金管局加息", value: "+25bp至4.25%", change: "今日生效", freq: "事件(9/17)", signal: "bear", desc: "香港跟随美联储加息，中美利差扩大制约国内货币政策空间" },
+      { name: "科技股大涨资金分流", value: "电子+3.73%", change: "高低切换", freq: "事件(9/17)", signal: "bear", desc: "科技成长板块大涨，两市主力资金净流入359.8亿主要流向电子、通信，银行等防御板块遭分流" }
+    ],
+    events: [
+      { type: "bull", title: "✅ 银行板块跌幅连续收窄，国有大行逆势上涨0.24%", desc: "9月17日银行行业全收益指数下跌0.30%，较前日-0.67%继续收窄。国有大型银行板块逆势上涨0.24%，建设银行+0.55%领涨，工商银行+0.37%、中国银行+0.30%、农业银行+0.15%均收红。宁波银行+0.82%、中信银行+0.79%表现较好。但城农商行分化明显，南京银行-1.42%、北京银行-1.06%。" },
+      { type: "bull", title: "✅ 央行连续两日加大投放，净投放1590亿", desc: "9月17日央行开展1620亿元7天期逆回购（利率1.40%）+6000亿元隔夜逆回购操作，当日6030亿元逆回购到期，实现净投放1590亿元，较前日1130亿进一步增加。这是央行连续两日开展7天期逆回购操作，呵护季末流动性意图明显。" },
+      { type: "bear", title: "⚠️ DR007升至1.45%上方，资金面小幅收敛", desc: "9月17日DR007加权利率升至1.45%上方，较前日1.42%上行约3bp。尽管央行净投放增加，但季末临近叠加美联储加息后资金面有所收敛。DR007已高于7天逆回购政策利率1.40%约5bp，显示银行间资金面边际收紧。" },
+      { type: "bear", title: "⚠️ 科技股大涨，资金从银行等防御板块分流", desc: "9月17日A股市场风格切换明显，电子行业大涨3.73%（主力净流入231.75亿）、通信行业大涨4.57%（净流入108.66亿），两市主力资金全天净流入359.80亿元。上证指数下跌0.41%报3875.6点，但科技成长板块表现强势，资金从银行等高股息防御板块流向科技成长。" },
+      { type: "bull", title: "✅ 10年期国债收益率微降至1.684%", desc: "9月17日10年期国债收益率1.6840%，较前日1.6848%下降0.08bp；活跃券260016收益率下行0.09bp报1.6806%。尽管美联储加息且DR007上行，但国内债市走势独立，资金面整体平稳支撑债市情绪。" }
+    ],
+    conclusion: "六维指标呈现银行板块跌幅连续收窄+国有大行逆势走强+央行连续加大投放与DR007上行资金收敛+科技股大涨资金分流+美联储加息落地消化的多空交织格局。多头力量来自：银行行业指数连续两日收窄跌幅（-1.24%→-0.67%→-0.30%）、国有大行+0.24%逆势上涨（建设银行+0.55%领涨）、央行连续两日净投放且规模扩大至1590亿、10年期国债收益率微降至1.684%、二季度净息差四年来首次回升至1.41%、板块PB仅0.68倍+股息率5.2%提供安全边际。空头压力来自：DR007升至1.45%上方（高于政策利率5bp）、科技股大涨资金分流（电子+3.73%、通信+4.57%）、美联储加息后点阵图鹰派（年内还将加息一次）、8月企业中长期贷款负增长（-80亿）、商业银行不良率连续两季上行至1.52%、30城新房成交同比-6.4%金九遇冷。短期银行股大概率维持震荡筑底走势，国有大行凭借低估值高股息和央行流动性呵护表现相对抗跌，但科技股风格下资金分流压力仍在。关注9月21日LPR报价（美联储加息后下调概率下降）及季末资金面变化。",
+    watch: [
+      "9月21日LPR报价窗口（本周六），关注美联储加息后是否仍有下调可能",
+      "央行公开市场操作量与DR007走势，季末资金面是否进一步收敛",
+      "科技股大涨后是否持续，观察资金高低切换对银行板块的分流压力",
+      "国有大行能否延续逆势上涨态势，建设银行、工商银行等领涨股表现",
+      "中美利差变化及人民币汇率走势，美联储加息后外部约束是否加强",
+      "房地产销售高频数据（第38周30城成交），验证金九成色"
+    ]
+  },
+
+  "2026-09-18": {
+    dateLabel: "2026年9月18日 星期五",
+    dataDateNote: "行情数据截至当日收盘（15:00）",
+    signal: "中性偏弱", signalClass: "neutral",
+    totalScore: 49.7,
+    stats: {
+      index: "-0.39%", indexClass: "down",
+      pb: "~0.68", dividend: "~5.2%",
+      fund: "净流出3.15亿", fundClass: "down",
+      bond: "1.683%"
+    },
+    scores: [
+      { name: "经济基本面", score: 45, signal: "偏空", cls: "bear", weight: "25%" },
+      { name: "净息差", score: 58, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 55, signal: "中性", cls: "neutral", weight: "15%" },
+      { name: "市场风格资金", score: 48, signal: "中性偏空", cls: "neutral", weight: "10%" },
+      { name: "政策事件", score: 50, signal: "中性", cls: "neutral", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月17日日报",
+      items: [
+        { label: "银行行业指数", prev: "-0.30%", curr: "-0.39%", change: "跌幅扩大0.09pct", cls: "deteriorated" },
+        { label: "10年期国债收益率", prev: "1.684%", curr: "1.683%", change: "-0.15bp", cls: "improved" },
+        { label: "DR007", prev: "~1.45%", curr: "~1.47%", change: "+2bp", cls: "deteriorated" },
+        { label: "公开市场净投放", prev: "+1590亿", curr: "-407亿", change: "转为净回笼", cls: "deteriorated" },
+        { label: "综合评分", prev: "50.4", curr: "49.7", change: "-0.7分", cls: "deteriorated" },
+        { label: "主力资金流向", prev: "净流出1.71亿", curr: "净流出3.15亿", change: "流出扩大", cls: "deteriorated" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分45，偏空" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50，大企业PMI 50.6%已扩张" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量23.91万亿，同比少2.64万亿，融资需求偏弱" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "历史第四次单月负增长，企业投资意愿不足，宽信用传导不畅" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润保持较快增长但增速连续3个月放缓，7月单月+11.2%" },
+      { group: "💰 二、净息差（权重25%）— 评分58，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "持平", freq: "月度(9月21日周一报价)", signal: "neutral", desc: "连续15个月不变，下周一（9/21）新一轮报价，美联储加息后下调概率低" },
+      { name: "5年期LPR", value: "3.50%", change: "持平", freq: "月度(9月21日周一报价)", signal: "neutral", desc: "连续15个月不变，下周一报价窗口，市场预期维持不变" },
+      { name: "10年期国债收益率", value: "1.683%", change: "-0.15bp", freq: "日度(9/18)", signal: "neutral", desc: "中国货币网1.6825%（-0.15bp），国债期货收涨10年主力+0.07%" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "二季度净息差四年来首次回升，息差拐点信号明确" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第37周(9.7-9.13)30城新房成交139.5万平，金九开局遇冷" },
+      { name: "8月70城房价", value: "一线环比+0.1%", change: "由平转涨", freq: "月度(8月)", signal: "neutral", desc: "一线城市新房环比由持平转涨0.1%，北京环比-0.2%唯一下行" },
+      { name: "二手房网签面积", value: "同比+10.6%", change: "持续正增", freq: "月度(1-8月)", signal: "bull", desc: "1-8月二手房网签面积5.5亿平同比+10.6%，二手成交占比创新高" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行，关注类贷款率2.21%环比+4bps" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分55，中性" },
+      { name: "DR007", value: "~1.47%", change: "+2bp", freq: "日度(9/18)", signal: "bear", desc: "税期走款影响，Shibor隔夜1.46%，DR007继续上行至1.47%附近" },
+      { name: "公开市场操作", value: "净回笼407亿", change: "转净回笼", freq: "日度(9/18)", signal: "bear", desc: "4633亿7天逆回购+1000亿14天逆回购，到期6040亿，净回笼407亿" },
+      { name: "14天期逆回购", value: "1000亿(新增)", change: "首次开展", freq: "事件(9/18)", signal: "bull", desc: "央行新增14天期逆回购操作，有助平抑税期与跨季资金波动" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "处于历史低位，美联储加息后降准预期有所降温" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分48，中性偏空" },
+      { name: "银行行业指数", value: "-0.39%", change: "跌幅扩大", freq: "日度(9/18)", signal: "bear", desc: "42只中12涨27跌，江苏银行+1.08%领涨，成都银行-0.98%领跌" },
+      { name: "主力资金流向", value: "净流出3.15亿", change: "流出扩大", freq: "日度(9/18)", signal: "neutral", desc: "江苏银行净流入7059万居首，交通银行等5股净流出超3000万" },
+      { name: "国有大行表现", value: "普遍下跌", change: "回调", freq: "日度(9/18)", signal: "bear", desc: "工商银行-0.86%、建设银行-0.92%、农业银行-1.16%、中国银行-0.61%" },
+      { name: "板块平均PB", value: "~0.68", change: "—", freq: "日度(9/18)", signal: "bull", desc: "处于历史极低估值区间，回调后估值更具吸引力" },
+      { name: "板块平均股息率", value: "~5.2%", change: "—", freq: "日度(9/18)", signal: "bull", desc: "显著高于10年国债(1.683%)，股息率差352bps，防御价值突出" },
+      { group: "📋 六、政策事件（权重5%）— 评分50，中性" },
+      { name: "央行新增14天逆回购", value: "1000亿", change: "新工具", freq: "事件(9/18)", signal: "bull", desc: "央行首次开展14天期逆回购操作，呵护跨季流动性，政策意图积极" },
+      { name: "税期资金收敛", value: "Shibor隔夜1.46%", change: "上行", freq: "事件(9/18)", signal: "bear", desc: "税期走款导致资金面收紧，DR007连续三日上行至1.47%" },
+      { name: "LPR报价临近", value: "9月21日周一", change: "—", freq: "事件(下周一)", signal: "neutral", desc: "下周一LPR报价，美联储加息后市场普遍预期维持不变" }
+    ],
+    events: [
+      { type: "bull", title: "✅ 央行首次开展14天期逆回购操作，呵护跨季流动性", desc: "9月18日央行开展4633亿元7天期逆回购（利率1.40%）+新增1000亿元14天期逆回购操作，当日6040亿逆回购到期，实现净回笼407亿元。这是央行首次在隔夜逆回购之外新增14天期品种，有助于平抑税期与跨季资金波动。" },
+      { type: "bear", title: "⚠️ 银行板块再度走弱，国有大行普遍回调", desc: "9月18日银行行业下跌0.39%，42只个股12涨27跌。江苏银行+1.08%领涨，平安银行+0.78%、沪农商行+0.69%跟涨；但国有大行普遍回调：农业银行-1.16%、建设银行-0.92%、工商银行-0.86%、中国银行-0.61%。主力资金净流出3.15亿元。" },
+      { type: "bear", title: "⚠️ 税期资金面收敛，DR007连续三日上行", desc: "受税期走款影响，货币市场利率多数上行。Shibor隔夜报1.46%，DR007升至1.47%附近，连续三个交易日上行（1.42%→1.45%→1.47%）。尽管央行净回笼407亿，但新增14天期逆回购显示政策层面对跨季资金面的呵护态度。" },
+      { type: "bull", title: "✅ 10年期国债收益率微降至1.683%，国债期货收涨", desc: "9月18日10年期国债收益率1.6825%，较前日1.6840%下降0.15bp。国债期货全部收涨，10年期主力合约涨0.07%至109.535。尽管资金面收敛，但债市走势平稳。" },
+      { type: "neutral", title: "📋 下周一（9月21日）LPR报价，市场预期维持不变", desc: "9月21日（周一）将公布9月LPR报价。在美联储9月16日加息25bp背景下，国内货币政策降息空间受限，市场普遍预期1年期LPR维持3.0%、5年期LPR维持3.5%不变。" }
+    ],
+    conclusion: "六维指标综合评分49.7（中性偏弱），较前日50.4下降0.7分。银行板块在连续两日跌幅收窄后再度走弱（-0.39%），国有大行普遍回调，主力资金净流出扩大至3.15亿。流动性方面，税期走款导致DR007连续三日上行至1.47%，央行从净投放转为净回笼407亿，但首次新增14天期逆回购操作体现了跨季呵护意图。10年期国债收益率微降至1.683%，债市情绪平稳。短期银行股面临三重压力：一是科技成长风格下资金持续分流，二是季末税期资金面收敛，三是美联储加息后LPR下调预期落空。但板块PB仅0.68倍、股息率5.2%提供了较强安全边际，央行新增14天期逆回购也释放了流动性呵护信号。下周一LPR报价是短期关键观察点。",
+    watch: [
+      "9月21日（周一）LPR报价：市场预期1Y 3.0%/5Y 3.5%维持不变，关注是否超预期下调",
+      "季末资金面变化：DR007能否回落至政策利率1.40%附近，跨季流动性是否平稳",
+      "央行14天期逆回购后续操作规模及利率，关注跨季流动性安排",
+      "银行板块能否止跌：国有大行连续回调后是否出现资金回流",
+      "科技成长风格是否持续，观察资金高低切换对银行板块的分流压力",
+      "房地产销售第38周数据，验证金九成色"
+    ]
+  }
+};
+
+function getSignalClass(score) {
+  if (score >= 60) return "bull";
+  if (score >= 40) return "neutral";
+  return "bear";
+}
+
+function getSignalText(score) {
+  if (score >= 60) return "偏多";
+  if (score >= 40) return "中性";
+  return "偏空";
+}
+
+function renderDash(scores) {
+  var html = "";
+  for (var i = 0; i < scores.length; i++) {
+    var s = scores[i];
+    var color = s.cls === "bull" ? "#48bb78" : (s.cls === "bear" ? "#f56565" : "#ecc94b");
+    html += '<div class="dash-card"><span class="weight">' + s.weight + '</span>' +
+      '<div class="dim-name">' + s.name + '</div>' +
+      '<div class="dim-score" style="color:' + color + ';">' + s.score + '</div>' +
+      '<span class="dim-signal signal-' + s.cls + '">' + s.signal + '</span></div>';
+  }
+  document.getElementById("dashGrid").innerHTML = html;
+}
+
+function renderCompare(compare) {
+  var html = "";
+  if (!compare.available) {
+    html = '<div class="no-prev">暂无前日数据可对比</div>';
+  } else {
+    html = '<p style="font-size:12px;color:#718096;margin-bottom:10px;">对比基准：' + compare.prevDate + '（绿色=改善，红色=恶化）</p>';
+    html += '<div class="compare-grid">';
+    for (var i = 0; i < compare.items.length; i++) {
+      var item = compare.items[i];
+      html += '<div class="compare-card">' +
+        '<div class="c-label">' + item.label + '</div>' +
+        '<div class="c-values"><span class="c-prev">' + item.prev + '</span><span class="c-curr">' + item.curr + '</span></div>' +
+        '<span class="c-change ' + item.cls + '">' + item.change + '</span></div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById("compareContent").innerHTML = html;
+}
+
+function renderDetails(details) {
+  var html = "";
+  for (var i = 0; i < details.length; i++) {
+    var d = details[i];
+    if (d.group) {
+      html += '<tr class="dim-group"><td colspan="6">' + d.group + '</td></tr>';
+    } else {
+      var dotClass = "dot-" + d.signal;
+      var changeClass = d.change.indexOf("+") === 0 || d.change.indexOf("改善") === 0 ? "up" : (d.change.indexOf("-") === 0 || d.change.indexOf("回落") === 0 || d.change.indexOf("负增") === 0 ? "down" : "");
+      html += '<tr><td>' + d.name + '</td><td class="num">' + d.value + '</td>' +
+        '<td class="num ' + changeClass + '">' + d.change + '</td>' +
+        '<td>' + d.freq + '</td>' +
+        '<td><span class="signal-dot ' + dotClass + '"></span>' + getSignalTextByClass(d.signal) + '</td>' +
+        '<td>' + d.desc + '</td></tr>';
+    }
+  }
+  document.getElementById("detailBody").innerHTML = html;
+}
+
+function getSignalTextByClass(cls) {
+  if (cls === "bull") return "偏多";
+  if (cls === "bear") return "偏空";
+  return "中性";
+}
+
+function renderEvents(events) {
+  var html = "";
+  for (var i = 0; i < events.length; i++) {
+    var e = events[i];
+    html += '<div class="event-item ' + e.type + '">' +
+      '<div class="event-title">' + e.title + '</div>' +
+      '<div class="event-desc">' + e.desc + '</div></div>';
+  }
+  document.getElementById("eventList").innerHTML = html;
+}
+
+function switchDate(key) {
+  var data = dailyData[key];
+  if (!data) return;
+
+  document.getElementById("reportDate").textContent = data.dateLabel;
+  document.getElementById("dataDateNote").textContent = data.dataDateNote;
+  document.getElementById("signalBadge").textContent = "综合信号：" + data.signal;
+  document.getElementById("signalBadge").className = "badge " + data.signalClass;
+
+  document.getElementById("statIndex").textContent = data.stats.index;
+  document.getElementById("statIndex").className = "value " + data.stats.indexClass;
+  document.getElementById("statPB").textContent = data.stats.pb;
+  document.getElementById("statDividend").textContent = data.stats.dividend;
+  document.getElementById("statFund").textContent = data.stats.fund;
+  document.getElementById("statFund").className = "value " + data.stats.fundClass;
+  document.getElementById("statBond").textContent = data.stats.bond;
+
+  renderDash(data.scores);
+
+  document.getElementById("scoreLabel").textContent = "综合评分：" + data.totalScore + " / 100（" + data.signal + "）";
+  var pointer = document.getElementById("scorePointer");
+  pointer.style.left = data.totalScore + "%";
+  pointer.setAttribute("data-score", data.totalScore + "分");
+
+  renderCompare(data.compare);
+  renderDetails(data.details);
+  renderEvents(data.events);
+
+  document.getElementById("conclusionText").textContent = data.conclusion;
+
+  var watchHtml = "";
+  for (var i = 0; i < data.watch.length; i++) {
+    watchHtml += "<li>" + data.watch[i] + "</li>";
+  }
+  document.getElementById("watchList").innerHTML = watchHtml;
+
+  document.getElementById("dataNote").textContent = "注：" + data.dataDateNote + "；月度/季度数据使用最近一期发布值。";
+}
+
+switchDate("2026-09-18");
+</script>
+</body>
+</html>
