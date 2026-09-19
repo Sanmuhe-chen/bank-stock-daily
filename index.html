@@ -108,7 +108,8 @@
         <option value="2026-09-15">2026年9月15日（周二）</option>
         <option value="2026-09-16">2026年9月16日（周三）</option>
         <option value="2026-09-17">2026年9月17日（周四）</option>
-        <option value="2026-09-18" selected>2026年9月18日（周五）</option>
+        <option value="2026-09-18">2026年9月18日（周五）</option>
+        <option value="2026-09-19" selected>2026年9月19日（周六·休市）</option>
       </select>
       <span style="font-size:11px;opacity:0.6;" id="dataDateNote">行情数据截至9月14日收盘</span>
     </div>
@@ -590,6 +591,88 @@ var dailyData = {
       "科技成长风格是否持续，观察资金高低切换对银行板块的分流压力",
       "房地产销售第38周数据，验证金九成色"
     ]
+  },
+
+  "2026-09-19": {
+    dateLabel: "2026年9月19日 星期六（A股休市）",
+    dataDateNote: "今日周六休市，行情数据沿用9月18日（周五）收盘",
+    signal: "中性偏弱", signalClass: "neutral",
+    totalScore: 49.7,
+    stats: {
+      index: "-0.39%（沿用周五）", indexClass: "down",
+      pb: "~0.68", dividend: "~5.2%",
+      fund: "净流出3.15亿（沿用周五）", fundClass: "down",
+      bond: "1.682%"
+    },
+    scores: [
+      { name: "经济基本面", score: 45, signal: "偏空", cls: "bear", weight: "25%" },
+      { name: "净息差", score: 58, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 55, signal: "中性", cls: "neutral", weight: "15%" },
+      { name: "市场风格资金", score: 48, signal: "中性偏空", cls: "neutral", weight: "10%" },
+      { name: "政策事件", score: 50, signal: "中性", cls: "neutral", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月18日日报",
+      items: [
+        { label: "银行行业指数", prev: "-0.39%", curr: "休市无变化", change: "持平", cls: "neutral" },
+        { label: "10年期国债收益率", prev: "1.682%", curr: "休市无变化", change: "持平", cls: "neutral" },
+        { label: "DR007", prev: "1.440%", curr: "休市无变化", change: "持平", cls: "neutral" },
+        { label: "公开市场净投放", prev: "-407亿", curr: "周末无操作", change: "—", cls: "neutral" },
+        { label: "综合评分", prev: "49.7", curr: "49.7", change: "持平", cls: "neutral" },
+        { label: "主力资金流向", prev: "净流出3.15亿", curr: "休市无变化", change: "持平", cls: "neutral" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分45，偏空（周末无更新，沿用8月数据）" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50，大企业PMI 50.6%已扩张" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量23.91万亿，同比少2.64万亿，融资需求偏弱" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "历史第四次单月负增长，企业投资意愿不足，宽信用传导不畅" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润保持较快增长但增速连续3个月放缓，7月单月+11.2%" },
+      { group: "💰 二、净息差（权重25%）— 评分58，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "下周一(9/21)报价", freq: "月度", signal: "neutral", desc: "连续15个月不变，下周一9:00公布，市场预期维持不变" },
+      { name: "5年期LPR", value: "3.50%", change: "下周一(9/21)报价", freq: "月度", signal: "neutral", desc: "连续15个月不变，下周一报价窗口，美联储加息后下调概率低" },
+      { name: "10年期国债收益率", value: "1.682%", change: "-0.20bp", freq: "日度(9/18收盘)", signal: "neutral", desc: "中国债券信息网9/18数据1.6820%，周末休市无变化" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "二季度净息差四年来首次回升，息差拐点信号明确" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空（周末无更新）" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第37周(9.7-9.13)30城新房成交139.5万平，金九开局遇冷" },
+      { name: "8月70城房价", value: "一线环比+0.1%", change: "由平转涨", freq: "月度(8月)", signal: "neutral", desc: "一线城市新房环比由持平转涨0.1%，北京环比-0.2%唯一下行" },
+      { name: "二手房网签面积", value: "同比+10.6%", change: "持续正增", freq: "月度(1-8月)", signal: "bull", desc: "1-8月二手房网签面积5.5亿平同比+10.6%，二手成交占比创新高" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行，关注类贷款率2.21%环比+4bps" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分55，中性（周末无操作）" },
+      { name: "DR007", value: "1.440%", change: "周五收盘", freq: "日度(9/18)", signal: "neutral", desc: "中国货币网9/18收盘1.4396%，较前日回落约1bp，税期影响已逐步消退" },
+      { name: "公开市场操作", value: "净回笼407亿", change: "周五", freq: "日度(9/18)", signal: "bear", desc: "4633亿7天逆回购+1000亿14天逆回购，到期6040亿，周末无操作" },
+      { name: "14天期逆回购", value: "1000亿(新增)", change: "首次开展", freq: "事件(9/18)", signal: "bull", desc: "央行新增14天期逆回购操作，有助平抑税期与跨季资金波动" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "处于历史低位，美联储加息后降准预期有所降温" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分48，中性偏空（周末休市）" },
+      { name: "银行行业指数", value: "-0.39%", change: "周五收盘", freq: "日度(9/18)", signal: "bear", desc: "42只中12涨27跌，江苏银行+1.08%领涨，成都银行-0.98%领跌" },
+      { name: "主力资金流向", value: "净流出3.15亿", change: "周五", freq: "日度(9/18)", signal: "neutral", desc: "江苏银行净流入7059万居首，交通银行等5股净流出超3000万" },
+      { name: "国有大行表现", value: "普遍下跌", change: "周五回调", freq: "日度(9/18)", signal: "bear", desc: "工商银行-0.86%、建设银行-0.92%、农业银行-1.16%、中国银行-0.61%" },
+      { name: "板块平均PB", value: "~0.68", change: "—", freq: "日度(9/18)", signal: "bull", desc: "处于历史极低估值区间，回调后估值更具吸引力" },
+      { name: "板块平均股息率", value: "~5.2%", change: "—", freq: "日度(9/18)", signal: "bull", desc: "显著高于10年国债(1.682%)，股息率差352bps，防御价值突出" },
+      { group: "📋 六、政策事件（权重5%）— 评分50，中性" },
+      { name: "央行副行长陆磊讲话", value: "9/18论坛", change: "AI金融风险", freq: "事件(9/18)", signal: "neutral", desc: "陆磊在中国-东盟金融合作论坛表示愿共同研判AI技术衍生的新型金融风险，统筹发展与安全" },
+      { name: "东方金诚：美联储不会连续加息", value: "9/18", change: "观点", freq: "事件(9/18)", signal: "neutral", desc: "东方金诚白雪认为美联储年内再加息一次概率上升，但K型分化、AI投资周期走弱不会开启连续加息" },
+      { name: "沪农商行吸收合并获批", value: "9/19", change: "监管批准", freq: "事件(9/19)", signal: "neutral", desc: "上海农商行吸收合并上海崇明沪农商村镇银行获监管批准，中小银行整合继续推进" },
+      { name: "下周一LPR报价", value: "9月21日9:00", change: "关键事件", freq: "事件(下周一)", signal: "neutral", desc: "市场普遍预期1Y 3.0%/5Y 3.5%维持不变，关注是否超预期调整" }
+    ],
+    events: [
+      { type: "neutral", title: "📋 今日周六A股休市，无新交易数据", desc: "9月19日为周六，A股休市，银行板块行情、资金流向均沿用9月18日（周五）收盘数据。综合评分维持49.7不变。" },
+      { type: "neutral", title: "📢 央行副行长陆磊：共同研判AI技术衍生的新型金融风险", desc: "9月18日中国-东盟金融合作与发展论坛上，央行副行长陆磊表示将引导金融机构稳妥有序推进AI应用，既激活海量数据处理能力，又统筹发展与安全。对银行板块直接影响有限，但反映金融科技监管框架持续完善。" },
+      { type: "neutral", title: "🔍 东方金诚：美联储不会开启连续加息周期", desc: "东方金诚白雪9月18日表示，美联储9月加息25bp符合预期，年内再加息一次概率上升，但美国经济K型分化、居民储蓄率偏低、AI投资周期可能边际走弱，不构成连续加息周期。这一判断若成立，国内货币政策外部约束将在四季度边际缓解。" },
+      { type: "neutral", title: "🏦 沪农商行吸收合并沪农商村镇银行获监管批准", desc: "上海农商行吸收合并上海崇明沪农商村镇银行获监管批准，中小银行兼并重组继续推进。同日沪农商行发行40亿元绿色金融债券（30亿固息1.55%+10亿浮息挂钩LPR下浮140bp）。" },
+      { type: "bull", title: "✅ DR007周五回落至1.44%，税期压力缓解", desc: "中国货币网数据显示9月18日DR007收盘1.4396%，较周中高点1.47%回落约3bp，接近政策利率1.40%。隔夜品种利率结束涨势回落5bp，R007成交占比超一半，显示税期走款影响已基本消退。" }
+    ],
+    conclusion: "今日周六A股休市，综合评分维持49.7（中性偏弱）不变。周末无重大政策事件，核心关注点集中在下周一（9月21日）9:00的LPR报价。市场普遍预期1年期LPR维持3.0%、5年期以上LPR维持3.5%不变——在美联储9月16日加息25bp的外部约束下，国内货币政策短期降息空间有限。若LPR如预期持平，则银行板块短期催化不足，可能继续震荡筑底；若超预期下调（概率较低），将对净息差预期和银行股估值形成双重影响（短空长多）。资金面方面，DR007周五已回落至1.44%附近，税期压力缓解，央行首次开展14天期逆回购操作体现跨季呵护意图。下周一重点关注：(1)LPR报价结果；(2)央行公开市场操作是否延续14天期品种；(3)银行板块在连续回调后能否企稳。",
+    watch: [
+      "9月21日（周一）9:00 LPR报价：市场预期1Y 3.0%/5Y 3.5%维持不变，关注是否超预期调整",
+      "周一开盘银行板块表现：连续回调后国有大行能否企稳反弹",
+      "央行公开市场操作：14天期逆回购是否续作，跨季流动性安排",
+      "DR007能否稳定在政策利率1.40%附近",
+      "房地产销售第38周（9.14-9.20）数据，验证金九成色",
+      "美联储9月加息后全球市场情绪变化，北向资金流向"
+    ]
   }
 };
 
@@ -712,7 +795,7 @@ function switchDate(key) {
   document.getElementById("dataNote").textContent = "注：" + data.dataDateNote + "；月度/季度数据使用最近一期发布值。";
 }
 
-switchDate("2026-09-18");
+switchDate("2026-09-19");
 </script>
 </body>
 </html>
