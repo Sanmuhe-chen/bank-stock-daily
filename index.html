@@ -110,7 +110,8 @@
         <option value="2026-09-17">2026年9月17日（周四）</option>
         <option value="2026-09-18">2026年9月18日（周五）</option>
         <option value="2026-09-19">2026年9月19日（周六·休市）</option>
-        <option value="2026-09-20" selected>2026年9月20日（周日·LPR公布）</option>
+        <option value="2026-09-20">2026年9月20日（周日·LPR公布）</option>
+        <option value="2026-09-21" selected>2026年9月21日（周一）</option>
       </select>
       <span style="font-size:11px;opacity:0.6;" id="dataDateNote">行情数据截至9月14日收盘</span>
     </div>
@@ -755,6 +756,87 @@ var dailyData = {
       "北向资金流向：美联储加息后外资对中资银行股态度",
       "第38周30城房地产成交数据（9.14-9.20），验证金九成色"
     ]
+  },
+
+  "2026-09-21": {
+    dateLabel: "2026年9月21日 星期一",
+    dataDateNote: "行情数据截至当日收盘（15:00），LPR已于9月20日公布",
+    signal: "中性偏多", signalClass: "bull",
+    totalScore: 53.2,
+    stats: {
+      index: "+0.9%（普涨反弹）", indexClass: "up",
+      pb: "~0.69", dividend: "~5.1%",
+      fund: "主力回流", fundClass: "up",
+      bond: "1.683%"
+    },
+    scores: [
+      { name: "经济基本面", score: 45, signal: "偏空", cls: "bear", weight: "25%" },
+      { name: "净息差", score: 60, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 65, signal: "偏多", cls: "bull", weight: "15%" },
+      { name: "市场风格资金", score: 60, signal: "偏多", cls: "bull", weight: "10%" },
+      { name: "政策事件", score: 55, signal: "中性偏多", cls: "neutral", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月20日日报",
+      items: [
+        { label: "银行行业指数", prev: "休市(-0.39%沿用)", curr: "约+0.9%", change: "明显反弹", cls: "improved" },
+        { label: "10年期国债收益率", prev: "1.682%", curr: "1.683%", change: "+0.1bp", cls: "deteriorated" },
+        { label: "DR007", prev: "休市(1.44%)", curr: "~1.44%", change: "持平", cls: "neutral" },
+        { label: "公开市场净投放", prev: "320亿(周日)", curr: "+1650亿", change: "大幅净投放", cls: "improved" },
+        { label: "综合评分", prev: "50.0", curr: "53.2", change: "+3.2分", cls: "improved" },
+        { label: "主力资金流向", prev: "休市(净流出3.15亿)", curr: "民生银行净流入1853万", change: "资金回流", cls: "improved" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分45，偏空（无新数据）" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量同比少2.64万亿" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "历史第四次单月负增长" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润较快增长但增速放缓" },
+      { group: "💰 二、净息差（权重25%）— 评分60，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "9月LPR如期维持3.0%，靴子落地，下一次10月20日" },
+      { name: "5年期LPR", value: "3.50%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "5年期以上LPR维持3.5%，房地产贷款利率锚稳定" },
+      { name: "10年期国债收益率", value: "1.683%", change: "+0.15bp", freq: "日度(9/21)", signal: "neutral", desc: "LPR不变落地后10年国债微升0.15bp，整体仍在1.67-1.68%低位" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "LPR不变消除下行担忧，息差企稳预期强化" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空（无新数据）" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第38周数据待公布" },
+      { name: "8月70城房价", value: "一线环比+0.1%", change: "由平转涨", freq: "月度(8月)", signal: "neutral", desc: "一线城市新房环比微涨" },
+      { name: "二手房网签面积", value: "同比+10.6%", change: "持续正增", freq: "月度(1-8月)", signal: "bull", desc: "1-8月二手房网签面积5.5亿平同比+10.6%" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分65，偏多" },
+      { name: "DR007", value: "~1.44%", change: "基本持平", freq: "日度(9/21)", signal: "neutral", desc: "7天回购加权利率约1.44%，与政策利率1.40%利差仅4bp，资金面宽松" },
+      { name: "公开市场操作", value: "净投放1650亿", change: "大幅净投放", freq: "日度(9/21)", signal: "bull", desc: "央行开展1650亿7天逆回购@1.40%，今日无到期，实现净投放1650亿" },
+      { name: "Shibor隔夜", value: "1.364%", change: "-0.1bp", freq: "日度(9/21)", signal: "bull", desc: "Shibor隔夜1.364%，较政策利率低36bp，短期资金面宽松" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "历史低位，专家预期四季度可能降准" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分60，偏多" },
+      { name: "银行行业指数", value: "约+0.9%", change: "普涨反弹", freq: "日度(9/21)", signal: "bull", desc: "42只银行股多数上涨，国有大行领涨" },
+      { name: "领涨个股", value: "农行+1.47%/中行+1.38%", change: "国有大行领涨", freq: "日度(9/21)", signal: "bull", desc: "农业银行+1.47%、中国银行+1.38%、交通银行+1.21%、建设银行+1.11%" },
+      { name: "主力资金流向", value: "民生银行净流入1853万", change: "资金回流", freq: "日度(9/21)", signal: "bull", desc: "民生银行主力净流入1853万（前日净流出7653万大幅反转）" },
+      { name: "板块平均PB", value: "~0.69", change: "估值修复", freq: "日度(9/21)", signal: "bull", desc: "上涨后PB小幅回升，仍处历史低位" },
+      { name: "板块平均股息率", value: "~5.1%", change: "—", freq: "日度(9/21)", signal: "bull", desc: "仍显著高于10年国债1.683%" },
+      { group: "📋 六、政策事件（权重5%）— 评分55，中性偏多" },
+      { name: "LPR落地", value: "连续16个月不变", change: "靴子落地", freq: "事件(9/20)", signal: "neutral", desc: "9月LPR维持3.0%/3.5%，符合预期，不确定性消除" },
+      { name: "央行净投放1650亿", value: "跨季呵护", change: "连续投放", freq: "事件(9/21)", signal: "bull", desc: "央行延续前置呵护节奏，临近中秋国庆季末持续投放流动性" },
+      { name: "美联储鹰派信号", value: "明尼阿波利斯联储", change: "外部约束", freq: "事件(9/20)", signal: "bear", desc: "美联储官员9月20日再放鹰，2026年末利率中值4.1%，外部约束仍在" }
+    ],
+    events: [
+      { type: "bull", title: "✅ 银行板块普涨反弹，国有大行领涨", desc: "9月21日银行板块在连续回调后迎来普涨反弹。农业银行+1.47%、中国银行+1.38%、交通银行+1.21%、民生银行+1.16%、建设银行+1.11%、招商银行+1.11%，工商银行+0.50%。前期超跌的国有大行集体反弹，市场风格从科技成长向价值防御小幅切换。" },
+      { type: "bull", title: "✅ 央行净投放1650亿，跨季呵护持续加码", desc: "央行9月21日开展1650亿元7天期逆回购操作，利率1.40%，今日无逆回购到期，实现净投放1650亿元。结合9月18日新增14天期逆回购、9月20日周日操作320亿，央行正通过多工具组合前置呵护跨季跨节资金面，临近中秋国庆长假流动性友好。" },
+      { type: "neutral", title: "📋 LPR不变靴子落地，市场反应平稳", desc: "9月20日LPR如期维持1Y 3.0%/5Y 3.5%不变，连续16个月。今日债市反应平稳，10年国债收益率微升0.15bp至1.683%，未出现大幅波动。机构判断国内货币政策不会跟随海外收紧，资产荒格局延续。" },
+      { type: "bull", title: "💧 资金面宽松，Shibor隔夜降至1.364%", desc: "Shibor隔夜报1.364%，较政策利率1.40%低36bp，DR001约1.35%。在央行持续净投放下，短期资金面明显宽松，为银行板块估值修复提供了流动性基础。" },
+      { type: "bear", title: "⚠️ 美联储鹰派信号仍在，外部约束未消", desc: "9月20日明尼阿波利斯联储主席再放鹰，美联储9月16日已加息至3.75%-4.00%，点阵图显示2026年末利率中值4.1%。中美利差倒挂仍在，但人民币汇率韧性较强，有效缓冲了外部冲击。" }
+    ],
+    conclusion: "银行股在连续回调后迎来普涨反弹，综合评分升至53.2（+3.2），接近偏多区域。核心驱动有三：一是LPR靴子落地，消除了降息不确定性，市场解读为利空出尽；二是央行连续大额净投放（今日1650亿），跨季流动性友好，Shibor隔夜降至1.364%；三是国有大行前期超跌后估值修复需求强烈。国有大行集体领涨（农行+1.47%、中行+1.38%），标志着资金从高位科技成长股向低估值高股息银行股的再平衡。但需注意：经济基本面（PMI低于荣枯线、企业中长贷负增长）和资产质量（地产销售偏弱）两大核心维度仍偏空，反弹的持续性取决于：(1)跨季后资金面能否维持宽松；(2)房地产销售金九成色；(3)四季度是否真的落地降准降息。当前53.2分仍处中性区间，建议观察而非追涨。",
+    watch: [
+      "银行板块反弹持续性：明日能否延续涨势，还是一日游行情",
+      "央行公开市场操作：14天期逆回购是否续作，跨季资金安排",
+      "Shibor和DR007走势：跨季后资金面是否继续宽松",
+      "第38周30城房地产成交数据（9.14-9.20），验证金九成色",
+      "9月官方PMI数据（月末公布），观察制造业是否重回荣枯线上",
+      "美联储官员讲话及美债收益率走势，外部约束变化"
+    ]
   }
 };
 
@@ -877,7 +959,7 @@ function switchDate(key) {
   document.getElementById("dataNote").textContent = "注：" + data.dataDateNote + "；月度/季度数据使用最近一期发布值。";
 }
 
-switchDate("2026-09-20");
+switchDate("2026-09-21");
 </script>
 </body>
 </html>
