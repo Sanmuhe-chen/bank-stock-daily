@@ -111,7 +111,8 @@
         <option value="2026-09-18">2026年9月18日（周五）</option>
         <option value="2026-09-19">2026年9月19日（周六·休市）</option>
         <option value="2026-09-20">2026年9月20日（周日·LPR公布）</option>
-        <option value="2026-09-21" selected>2026年9月21日（周一）</option>
+        <option value="2026-09-21">2026年9月21日（周一）</option>
+        <option value="2026-09-22" selected>2026年9月22日（周二）</option>
       </select>
       <span style="font-size:11px;opacity:0.6;" id="dataDateNote">行情数据截至9月14日收盘</span>
     </div>
@@ -837,6 +838,87 @@ var dailyData = {
       "9月官方PMI数据（月末公布），观察制造业是否重回荣枯线上",
       "美联储官员讲话及美债收益率走势，外部约束变化"
     ]
+  },
+
+  "2026-09-22": {
+    dateLabel: "2026年9月22日 星期二",
+    dataDateNote: "行情数据截至当日收盘（15:00）",
+    signal: "中性", signalClass: "neutral",
+    totalScore: 52.2,
+    stats: {
+      index: "约持平（分化整理）", indexClass: "neutral",
+      pb: "~0.69", dividend: "~5.1%",
+      fund: "兴业净流入1.77亿/交行净流出7643万", fundClass: "neutral",
+      bond: "1.678%"
+    },
+    scores: [
+      { name: "经济基本面", score: 45, signal: "偏空", cls: "bear", weight: "25%" },
+      { name: "净息差", score: 60, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 62, signal: "偏多", cls: "bull", weight: "15%" },
+      { name: "市场风格资金", score: 55, signal: "中性", cls: "neutral", weight: "10%" },
+      { name: "政策事件", score: 55, signal: "中性偏多", cls: "neutral", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月21日日报",
+      items: [
+        { label: "银行行业指数", prev: "约+0.9%", curr: "约持平", change: "涨势暂停分化", cls: "deteriorated" },
+        { label: "10年期国债收益率", prev: "1.683%", curr: "1.678%", change: "-0.5bp", cls: "improved" },
+        { label: "DR007", prev: "~1.44%", curr: "~1.43%", change: "-1bp", cls: "improved" },
+        { label: "公开市场净投放", prev: "+1650亿", curr: "+350亿", change: "投放量减少", cls: "deteriorated" },
+        { label: "综合评分", prev: "53.2", curr: "52.2", change: "-1.0分", cls: "deteriorated" },
+        { label: "主力资金流向", prev: "民生银行净流入1853万", curr: "兴业+1.77亿/交行-7643万", change: "分化", cls: "neutral" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分45，偏空（无新数据）" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量同比少2.64万亿" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "历史第四次单月负增长" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润较快增长但增速放缓" },
+      { group: "💰 二、净息差（权重25%）— 评分60，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "9月LPR维持3.0%，下一次10月20日" },
+      { name: "5年期LPR", value: "3.50%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "5年期以上LPR维持3.5%" },
+      { name: "10年期国债收益率", value: "1.678%", change: "-0.5bp", freq: "日度(9/22)", signal: "bull", desc: "中国货币网1.6775%，活跃券260010报1.672%（-0.55bp），债市走强" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "息差企稳预期强化" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空（无新数据）" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第38周数据待公布" },
+      { name: "8月70城房价", value: "一线环比+0.1%", change: "由平转涨", freq: "月度(8月)", signal: "neutral", desc: "一线城市新房环比微涨" },
+      { name: "二手房网签面积", value: "同比+10.6%", change: "持续正增", freq: "月度(1-8月)", signal: "bull", desc: "1-8月二手房网签面积5.5亿平同比+10.6%" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分62，偏多" },
+      { name: "DR007", value: "~1.43%", change: "-1bp", freq: "日度(9/22)", signal: "bull", desc: "资金面延续宽松，DR007继续下行，低于政策利率1.40%约3bp" },
+      { name: "公开市场操作", value: "净投放350亿", change: "投放量减少", freq: "日度(9/22)", signal: "neutral", desc: "央行开展350亿7天逆回购@1.40%，今日无到期，净投放350亿（较昨日1650亿大幅减少）" },
+      { name: "Shibor隔夜", value: "~1.36%", change: "持平", freq: "日度(9/22)", signal: "bull", desc: "Shibor隔夜维持1.36%附近，短期资金面宽松" },
+      { name: "存款准备金率", value: "~9.5%", change: "持平", freq: "事件", signal: "neutral", desc: "历史低位" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分55，中性" },
+      { name: "银行行业指数", value: "约持平", change: "分化整理", freq: "日度(9/22)", signal: "neutral", desc: "昨日普涨后今日分化，昨日领涨国有大行回吐" },
+      { name: "领涨个股", value: "厦门银行+2.18%/中信+1.23%", change: "城商行/股份行领涨", freq: "日度(9/22)", signal: "bull", desc: "厦门银行+2.18%、中信银行+1.23%、兴业银行+0.90%、沪农商行+0.68%" },
+      { name: "领跌个股", value: "农业银行-0.58%", change: "昨日领涨股回吐", freq: "日度(9/22)", signal: "bear", desc: "农业银行-0.58%（昨日+1.47%回吐），北京银行-0.36%、邮储银行-0.37%" },
+      { name: "主力资金流向", value: "兴业+1.77亿/交行-7643万", change: "分化", freq: "日度(9/22)", signal: "neutral", desc: "兴业银行净流入1.77亿居首，交通银行净流出7643万（近3日累计净流出3.33亿）" },
+      { name: "板块平均PB", value: "~0.69", change: "持平", freq: "日度(9/22)", signal: "bull", desc: "历史低位" },
+      { group: "📋 六、政策事件（权重5%）— 评分55，中性偏多" },
+      { name: "央行净投放350亿", value: "跨季呵护延续", change: "量缩价稳", freq: "事件(9/22)", signal: "neutral", desc: "投放量从1650亿降至350亿，但仍为净投放，资金面维持宽松" },
+      { name: "债市走强", value: "10年国债1.678%", change: "-0.5bp", freq: "事件(9/22)", signal: "bull", desc: "30年国债下行1.3bp至2.133%，机构两日增仓超长期国债期货近3万手" },
+      { name: "首批摊余成本债基上线", value: "千亿增量", change: "利好债市", freq: "事件(9/22)", signal: "bull", desc: "首批摊余成本债基上线，千亿增量资金将奔赴债市，长端利率下行利好银行估值" }
+    ],
+    events: [
+      { type: "neutral", title: "📊 银行板块分化整理，昨日领涨股回吐", desc: "9月22日银行板块在昨日普涨后进入分化整理。厦门银行+2.18%领涨，中信银行+1.23%、兴业银行+0.90%跟涨；但昨日领涨的农业银行-0.58%回吐涨幅，北京银行-0.36%、邮储银行-0.37%。板块整体约持平，呈现\"昨天普涨、今天分化\"的典型反弹后整理特征。" },
+      { type: "bull", title: "✅ 债市走强，10年国债收益率降至1.678%", desc: "9月22日银行间利率债收益率多数下行，10年国债活跃券260010报1.672%（-0.55bp），中国货币网口径1.6775%。30年国债下行1.3bp至2.133%。机构两日增仓超长期国债期货近3万手，首批摊余成本债基上线带来千亿增量资金预期，长端利率下行利好银行高股息逻辑。" },
+      { type: "neutral", title: "💧 央行净投放缩量至350亿，资金面仍宽松", desc: "央行9月22日开展350亿7天逆回购@1.40%，净投放350亿，较昨日1650亿大幅缩量。但资金面仍宽松：DR007约1.43%（低于政策利率1bp），Shibor隔夜1.36%。央行缩量投放反映昨日大额投放后流动性已较充裕，无需持续大额放水。" },
+      { type: "bull", title: "💰 兴业银行获主力净流入1.77亿，资金向优质股份行集中", desc: "资金流向分化：兴业银行主力净流入1.77亿居首，平安银行净流入4578万；交通银行净流出7643万（近3日累计流出3.33亿）。资金从前期涨幅较大的国有大行向基本面更优的股份行切换。" },
+      { type: "neutral", title: "📋 明日关注：反弹能否延续还是一日游", desc: "昨日银行板块普涨反弹后今日分化整理，关键看明日能否再度上攻。若继续分化整理则反弹可能为一日游；若再度普涨则确认短期底部。" }
+    ],
+    conclusion: "银行板块在昨日普涨后今日分化整理，综合评分微降至52.2（-1.0）。昨日领涨的国有大行（农行-0.58%）出现回吐，而厦门银行、中信银行、兴业银行等城商行/股份行补涨，板块内部轮动加快。债市表现强劲：10年国债下行至1.678%，30年国债下行1.3bp，首批摊余成本债基上线带来千亿增量资金预期，长端利率下行继续强化银行股高股息配置逻辑。央行净投放从1650亿缩量至350亿，但资金面仍宽松（DR007仅1.43%），无需担忧流动性。整体看，银行板块短期处于\"政策底已现、市场底待确认\"阶段：LPR靴子落地+央行呵护流动性+债市走强构成三重支撑，但经济基本面偏弱和板块轮动加快意味着反弹不会一蹴而就。52.2分仍处中性区间偏上，建议持有观望，等待放量上攻信号。",
+    watch: [
+      "银行板块明日能否再度上攻，还是继续分化整理",
+      "央行公开市场操作：净投放量是否维持，跨季资金安排",
+      "10年国债收益率能否继续下行，跌破1.67%关口",
+      "首批摊余成本债基金发行规模及对债市的增量影响",
+      "第38周30城房地产成交数据（9.14-9.20）公布",
+      "9月PMI预览数据（月末公布）"
+    ]
   }
 };
 
@@ -959,7 +1041,7 @@ function switchDate(key) {
   document.getElementById("dataNote").textContent = "注：" + data.dataDateNote + "；月度/季度数据使用最近一期发布值。";
 }
 
-switchDate("2026-09-21");
+switchDate("2026-09-22");
 </script>
 </body>
 </html>
