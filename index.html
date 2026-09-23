@@ -112,7 +112,8 @@
         <option value="2026-09-19">2026年9月19日（周六·休市）</option>
         <option value="2026-09-20">2026年9月20日（周日·LPR公布）</option>
         <option value="2026-09-21">2026年9月21日（周一）</option>
-        <option value="2026-09-22" selected>2026年9月22日（周二）</option>
+        <option value="2026-09-22">2026年9月22日（周二）</option>
+        <option value="2026-09-23" selected>2026年9月23日（周三）</option>
       </select>
       <span style="font-size:11px;opacity:0.6;" id="dataDateNote">行情数据截至9月14日收盘</span>
     </div>
@@ -919,6 +920,87 @@ var dailyData = {
       "第38周30城房地产成交数据（9.14-9.20）公布",
       "9月PMI预览数据（月末公布）"
     ]
+  },
+
+  "2026-09-23": {
+    dateLabel: "2026年9月23日 星期三",
+    dataDateNote: "行情数据截至当日收盘（15:00）",
+    signal: "中性", signalClass: "neutral",
+    totalScore: 51.2,
+    stats: {
+      index: "约-0.35%（板块回调）", indexClass: "down",
+      pb: "~0.69", dividend: "~5.1%",
+      fund: "中国银行净流出1.50亿/股份制板块净流出2.59亿", fundClass: "down",
+      bond: "1.681%"
+    },
+    scores: [
+      { name: "经济基本面", score: 45, signal: "偏空", cls: "bear", weight: "25%" },
+      { name: "净息差", score: 60, signal: "中性偏多", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 42, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 58, signal: "中性偏多", cls: "neutral", weight: "15%" },
+      { name: "市场风格资金", score: 48, signal: "偏空", cls: "bear", weight: "10%" },
+      { name: "政策事件", score: 60, signal: "偏多", cls: "bull", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "9月22日日报",
+      items: [
+        { label: "银行行业指数", prev: "约持平", curr: "约-0.35%", change: "板块回调", cls: "deteriorated" },
+        { label: "10年期国债收益率", prev: "1.678%", curr: "1.681%", change: "+0.3bp", cls: "deteriorated" },
+        { label: "DR007", prev: "~1.43%", curr: "~1.43%", change: "持平", cls: "neutral" },
+        { label: "公开市场净投放", prev: "+350亿", curr: "-1020亿", change: "转为净回笼", cls: "deteriorated" },
+        { label: "综合评分", prev: "52.2", curr: "51.2", change: "-1.0分", cls: "deteriorated" },
+        { label: "主力资金流向", prev: "分化", curr: "中行净流出1.50亿", change: "资金流出", cls: "deteriorated" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分45，偏空（无新数据）" },
+      { name: "制造业PMI", value: "49.8%", change: "+0.6pct", freq: "月度(8月)", signal: "neutral", desc: "连续回升但仍低于荣枯线50" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "前8月社融增量同比少2.64万亿" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "历史第四次单月负增长" },
+      { name: "工业企业利润同比", value: "+17.6%", change: "-1.1pct", freq: "月度(1-7月)", signal: "bull", desc: "利润较快增长但增速放缓" },
+      { group: "💰 二、净息差（权重25%）— 评分60，中性偏多" },
+      { name: "1年期LPR", value: "3.00%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "9月LPR维持3.0%，下一次10月20日" },
+      { name: "5年期LPR", value: "3.50%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "5年期以上LPR维持3.5%" },
+      { name: "10年期国债收益率", value: "1.681%", change: "+0.3bp", freq: "日度(9/23)", signal: "neutral", desc: "中债1.6807%，活跃券260016报1.674%（+0.2bp），窄幅震荡" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "息差企稳预期强化" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分42，偏空（无新数据）" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第38周数据待公布" },
+      { name: "8月70城房价", value: "一线环比+0.1%", change: "由平转涨", freq: "月度(8月)", signal: "neutral", desc: "一线城市新房环比微涨" },
+      { name: "二手房网签面积", value: "同比+10.6%", change: "持续正增", freq: "月度(1-8月)", signal: "bull", desc: "1-8月二手房网签面积5.5亿平同比+10.6%" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分58，中性偏多" },
+      { name: "DR007", value: "~1.43%", change: "持平", freq: "日度(9/23)", signal: "neutral", desc: "资金面维持宽松，DR007约1.43%" },
+      { name: "公开市场操作", value: "净回笼1020亿", change: "转为净回笼", freq: "日度(9/23)", signal: "bear", desc: "央行开展80亿7天逆回购@1.40%，1100亿到期，净回笼1020亿" },
+      { name: "明日MLF操作", value: "8000亿", change: "大额投放", freq: "事件(9/24)", signal: "bull", desc: "央行公告9月24日将开展8000亿元1年期MLF操作，对冲净回笼" },
+      { name: "万亿隔夜逆回购", value: "将跨季上演", change: "政策呵护", freq: "事件", signal: "bull", desc: "万亿隔夜逆回购操作将跨季上演，保障季末资金面" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分48，偏空" },
+      { name: "银行行业指数", value: "约-0.35%", change: "板块回调", freq: "日度(9/23)", signal: "bear", desc: "股份制银行板块跌0.43%，多数个股下跌" },
+      { name: "领涨个股", value: "齐鲁银行+0.88%/瑞丰+0.81%", change: "城商行领涨", freq: "日度(9/23)", signal: "bull", desc: "齐鲁银行+0.88%、瑞丰银行+0.81%、杭州银行+0.35%" },
+      { name: "领跌个股", value: "中国银行-1.05%", change: "国有大行领跌", freq: "日度(9/23)", signal: "bear", desc: "中国银行-1.05%（主力净流出1.50亿）、民生银行-0.86%、招商银行-0.54%" },
+      { name: "主力资金流向", value: "中行-1.50亿/股份制-2.59亿", change: "资金流出", freq: "日度(9/23)", signal: "bear", desc: "中国银行主力净流出1.50亿，民生银行净流出7057万，股份制银行板块净流出2.59亿" },
+      { name: "板块平均PB", value: "~0.69", change: "微降", freq: "日度(9/23)", signal: "bull", desc: "历史低位" },
+      { group: "📋 六、政策事件（权重5%）— 评分60，偏多" },
+      { name: "明日8000亿MLF", value: "1年期", change: "大额投放", freq: "事件(9/24)", signal: "bull", desc: "央行公告9月24日开展8000亿元MLF操作，对冲季末资金需求" },
+      { name: "万亿隔夜逆回购", value: "跨季呵护", change: "政策加码", freq: "事件", signal: "bull", desc: "万亿隔夜逆回购将跨季上演，央行多工具组合保障流动性" },
+      { name: "香港发行央票", value: "600亿6个月", change: "离岸回笼", freq: "事件(9/23)", signal: "neutral", desc: "央行在香港发行600亿元6个月期人民币央行票据" }
+    ],
+    events: [
+      { type: "bear", title: "⚠️ 银行板块回调，中国银行领跌-1.05%", desc: "9月23日银行板块整体回调，股份制银行板块跌0.43%。中国银行-1.05%领跌，主力资金净流出1.50亿元；民生银行-0.86%，净流出7057万；招商银行-0.54%。仅齐鲁银行+0.88%、瑞丰银行+0.81%等少数城商行上涨。前期领涨的国有大行连续两日回吐涨幅。" },
+      { type: "bull", title: "✅ 央行预告明日8000亿MLF，万亿隔夜逆回购将跨季", desc: "央行9月23日公告：9月24日将开展8000亿元1年期MLF操作。同时，万亿隔夜逆回购操作将跨季上演。虽然今日公开市场净回笼1020亿（80亿投放vs1100亿到期），但央行通过MLF+隔夜逆回购多工具组合，明确释放跨季流动性呵护信号，资金面无忧。" },
+      { type: "neutral", title: "📊 债市窄幅震荡，长端表现亮眼", desc: "9月23日银行间利率债收益率窄幅震荡，10年国债活跃券260016报1.674%（+0.2bp），中债口径1.6807%。30年国债下行0.3bp至2.110%，长端表现亮眼。机构认为10年国债将在1.65%-1.70%区间盘整。" },
+      { type: "bear", title: "💸 主力资金持续流出银行板块", desc: "资金流向显示：中国银行主力净流出1.50亿（近3日累计流出2.00亿），民生银行净流出7057万，股份制银行板块整体净流出2.59亿。银行板块连续两日资金净流出，短期资金面承压。" },
+      { type: "bull", title: "📋 明日MLF操作是关键观察点", desc: "9月24日8000亿MLF操作的利率和投放方式是关键：若MLF利率维持2.0%不变，则LPR继续稳定；若MLF缩量续作，则可能释放收紧信号。同时关注万亿隔夜逆回购的实际操作规模。" }
+    ],
+    conclusion: "银行板块连续第二日回调，综合评分降至51.2（-1.0）。今日股份制银行板块跌0.43%，中国银行-1.05%领跌，主力资金净流出1.50亿，前期领涨的国有大行持续回吐。但政策面传来重大利好：央行预告明日将开展8000亿元MLF操作，万亿隔夜逆回购将跨季上演，多工具组合明确释放跨季流动性呵护信号。虽然今日公开市场净回笼1020亿，但这是短期到期因素，明日MLF大额投放将完全对冲。债市窄幅震荡，10年国债1.681%基本持平。整体看，银行板块短期处于\"政策利好预期已部分兑现、资金面短期流出\"的调整阶段。51.2分仍处中性区间，明日8000亿MLF操作是关键转折点：若MLF利率不变且足额投放，将为银行板块提供流动性支撑；若缩量或加息，则可能进一步承压。建议关注明日MLF结果后再做决策。",
+    watch: [
+      "明日8000亿MLF操作：利率是否维持2.0%，投放规模是否足额",
+      "万亿隔夜逆回购实际操作规模及跨季资金面变化",
+      "银行板块能否止跌企稳，还是继续回调",
+      "主力资金流向是否扭转流出态势",
+      "10年国债收益率能否守住1.68%关口",
+      "第38周30城房地产成交数据公布"
+    ]
   }
 };
 
@@ -1041,7 +1123,7 @@ function switchDate(key) {
   document.getElementById("dataNote").textContent = "注：" + data.dataDateNote + "；月度/季度数据使用最近一期发布值。";
 }
 
-switchDate("2026-09-22");
+switchDate("2026-09-23");
 </script>
 </body>
 </html>
