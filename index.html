@@ -120,7 +120,8 @@
         <option value="2026-09-27">2026年9月27日（周日·假期休市）</option>
         <option value="2026-09-28">2026年9月28日（周一·节后首日）</option>
         <option value="2026-09-29">2026年9月29日（周二·季末前一日）</option>
-        <option value="2026-09-30" selected>2026年9月30日（周三·季末+PMI）</option>
+        <option value="2026-09-30">2026年9月30日（周三·季末+PMI）</option>
+        <option value="2026-10-01" selected>2026年10月1日（周四·国庆休市）</option>
       </select>
       <span style="font-size:11px;opacity:0.6;" id="dataDateNote">行情数据截至9月14日收盘</span>
     </div>
@@ -133,6 +134,19 @@
     </div>
   </div>
 
+  <div id="holidaySection" style="display:none;">
+    <div class="section">
+      <h2>🏖️ 假期休市 · 边际异动速览</h2>
+      <p style="font-size:13px;color:#718096;margin-bottom:16px;" id="holidayNote"></p>
+      <div id="holidayItems"></div>
+      <div style="margin-top:20px;padding:14px;background:#f7fafc;border-radius:8px;border-left:4px solid #4299e1;">
+        <div style="font-size:13px;font-weight:600;color:#2b6cb0;margin-bottom:6px;">📌 假期模式说明</div>
+        <div style="font-size:12px;color:#4a5568;line-height:1.7;">本日为A股休市日，仅记录假期期间新增边际变化（海外市场、政策公告、大宗商品等），不执行六维指标评分与完整明细。节后首个交易日自动恢复完整版日报。</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="normalContent">
   <div class="section">
     <h2>六维信号仪表盘</h2>
     <div class="dash-grid" id="dashGrid"></div>
@@ -200,8 +214,9 @@
       <strong>免责声明：</strong>本日报由AI自动生成，仅供研究参考，不构成任何投资建议。投资有风险，入市需谨慎。
     </div>
   </div>
+  </div>
 
-  <div class="footer">银行股涨跌监测日报 · 六维指标体系 · 每日10:00自动生成</div>
+  <div class="footer">银行股涨跌监测日报 · 六维指标体系 · 每日18:30自动生成</div>
 </div>
 
 <script>
@@ -1580,6 +1595,20 @@ var dailyData = {
       "10月20日LPR报价，关注是否下调",
       "第38周30城房地产成交数据，验证金九成色"
     ]
+  },
+
+  "2026-10-01": {
+    dateLabel: "2026年10月1日 星期四（国庆假期·休市）",
+    dataDateNote: "国庆假期第一天（10/1-10/7休市），A股及银行间债市休市；仅记录假期边际异动",
+    holidayMode: true,
+    holidayNote: "国庆假期首日，全球市场正常交易。核心关注：美债收益率走势、美联储加息预期变化、海外股市表现。10月8日（周四）A股恢复交易，届时央行1.2万亿买断式逆回购落地。",
+    holidayItems: [
+      { tag: "利空", title: "美债10年收益率飙升至5.34%，创2002年以来新高", desc: "10月1日美国10年期国债收益率上涨4bp至5.348%，突破2007年高点，创2002年以来新高；30年期美债收益率同样刷新2002年高位。英国30年期国债收益率升至6%（1998年以来首次）。全球债市抛售潮加剧，欧股大跌，纳指期货抹去涨幅，美元触及三个月高点。中美利差倒挂进一步加深，节后外资流向承压。" },
+      { tag: "利好", title: "美联储10月加息预期大幅回落，从70%降至37%-50%", desc: "纽约联储主席威廉姆斯表态：九月加息落地后，当前无需急于进一步收紧货币政策。受此影响，市场对美联储10月加息的预期概率从70%回落至37%-50%。两年期美债收益率自高位回落，黄金借机技术性反弹。若加息预期持续降温，有望缓解美债收益率上行压力。" },
+      { tag: "中性", title: "美股9月收官：纳指+1.86%，道指-4.29%，分化明显", desc: "美股三大指数9月涨跌不一：纳指9月累涨1.86%（三季度+2.47%），标普500累跌0.45%（三季度+2.03%），道指累跌4.29%（三季度-2.7%）。大型科技股多数上涨，传统周期股承压。美光科技Q4营收利润双超预期。" },
+      { tag: "中性", title: "黄金高位震荡：现货4156美元/盎司，上金所907元/克+1.09%", desc: "现货黄金报4155.86美元/盎司（-0.03%），COMEX黄金期货4185.50美元/盎司。上金所黄金9999报907.32元/克（+1.09%），黄金T+D 906.63元/克（+1.35%）。美债收益率飙升压制金价，但美联储加息预期回落提供支撑，黄金高位震荡。" },
+      { tag: "利空", title: "法国预算问题发酵，法德10年利差扩大至131bp", desc: "法国预算问题持续成为市场焦点，法德10年期国债收益率利差扩大4bp至131bp。彭博MLIV执行主编指出'法国正处于全球债市风暴中心'。欧洲主权债务风险升温，可能波及全球风险偏好。" }
+    ]
   }
 };
 
@@ -1669,6 +1698,28 @@ function switchDate(key) {
 
   document.getElementById("reportDate").textContent = data.dateLabel;
   document.getElementById("dataDateNote").textContent = data.dataDateNote;
+
+  if (data.holidayMode) {
+    document.getElementById("normalContent").style.display = "none";
+    document.getElementById("holidaySection").style.display = "block";
+    document.getElementById("signalBadge").textContent = "假期休市";
+    document.getElementById("signalBadge").className = "badge neutral";
+    document.getElementById("holidayNote").textContent = data.holidayNote || "";
+    var html = "";
+    for (var i = 0; i < data.holidayItems.length; i++) {
+      var item = data.holidayItems[i];
+      var tagColor = item.tag === "利好" ? "#48bb78" : (item.tag === "利空" ? "#f56565" : "#4299e1");
+      html += '<div style="padding:14px 16px;margin-bottom:10px;background:#fff;border-radius:8px;border:1px solid #e2e8f0;border-left:4px solid ' + tagColor + ';">' +
+        '<div style="font-size:14px;font-weight:600;color:#1a365d;margin-bottom:6px;"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;color:#fff;background:' + tagColor + ';margin-right:8px;">' + item.tag + '</span>' + item.title + '</div>' +
+        '<div style="font-size:12px;color:#4a5568;line-height:1.7;">' + item.desc + '</div></div>';
+    }
+    document.getElementById("holidayItems").innerHTML = html;
+    return;
+  }
+
+  document.getElementById("normalContent").style.display = "block";
+  document.getElementById("holidaySection").style.display = "none";
+
   document.getElementById("signalBadge").textContent = "综合信号：" + data.signal;
   document.getElementById("signalBadge").className = "badge " + data.signalClass;
 
@@ -1702,7 +1753,7 @@ function switchDate(key) {
   document.getElementById("dataNote").textContent = "注：" + data.dataDateNote + "；月度/季度数据使用最近一期发布值。";
 }
 
-switchDate("2026-09-30");
+switchDate("2026-10-01");
 </script>
 </body>
 </html>
