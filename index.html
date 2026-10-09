@@ -128,7 +128,8 @@
         <option value="2026-10-05">2026年10月5日（周一·国庆休市）</option>
         <option value="2026-10-06">2026年10月6日（周二·国庆休市）</option>
         <option value="2026-10-07">2026年10月7日（周三·国庆休市）</option>
-        <option value="2026-10-08" selected>2026年10月8日（周四·节后首日）</option>
+        <option value="2026-10-08">2026年10月8日（周四·节后首日）</option>
+        <option value="2026-10-09" selected>2026年10月9日（周五）</option>
       </select>
       <span style="font-size:11px;opacity:0.6;" id="dataDateNote">行情数据截至9月14日收盘</span>
     </div>
@@ -200,6 +201,11 @@
     </div>
     <h3 style="margin-top:18px;font-size:14px;color:#0f2c4d;">明日重点关注</h3>
     <ul class="watch-list" id="watchList"></ul>
+  </div>
+
+  <div class="section" id="attributionSection">
+    <h2>📊 当日涨跌六维指标归因分析</h2>
+    <div id="attributionContent"></div>
   </div>
 
   <div class="section">
@@ -1785,6 +1791,99 @@ var dailyData = {
       "央行后续公开市场操作，关注DR007走势",
       "银行板块创历史新高后的持续性，关注主力资金流向"
     ]
+  },
+
+  "2026-10-09": {
+    dateLabel: "2026年10月9日 星期五",
+    dataDateNote: "行情数据截至10月9日收盘（15:00）；银行板块大幅回调，主力资金净流出",
+    signal: "中性", signalClass: "neutral",
+    totalScore: 53.5,
+    stats: {
+      index: "-1.08%（大幅回调）", indexClass: "bear",
+      pb: "~0.69", dividend: "~5.2%",
+      fund: "主力净流出11.33亿", fundClass: "bear",
+      bond: "1.680%（-0.2bp）"
+    },
+    scores: [
+      { name: "经济基本面", score: 55, signal: "中性", cls: "neutral", weight: "25%" },
+      { name: "净息差", score: 58, signal: "中性", cls: "neutral", weight: "25%" },
+      { name: "资产质量", score: 45, signal: "偏空", cls: "bear", weight: "20%" },
+      { name: "货币流动性", score: 55, signal: "中性", cls: "neutral", weight: "15%" },
+      { name: "市场风格资金", score: 45, signal: "偏空", cls: "bear", weight: "10%" },
+      { name: "政策事件", score: 70, signal: "偏多", cls: "bull", weight: "5%" }
+    ],
+    compare: {
+      available: true,
+      prevDate: "10月8日日报（节后首日）",
+      items: [
+        { label: "银行行业指数", prev: "+1.04%", curr: "-1.08%", change: "由涨转跌，获利了结", cls: "bear" },
+        { label: "10年期国债收益率", prev: "1.682%", curr: "1.680%", change: "-0.2bp，基本平稳", cls: "neutral" },
+        { label: "DR007", prev: "节后平稳", curr: "平稳", change: "资金面整体平稳", cls: "neutral" },
+        { label: "公开市场操作", prev: "净回笼6085亿", curr: "净回笼6040亿", change: "连续两日净回笼", cls: "bear" },
+        { label: "综合评分", prev: "58.3（中性）", curr: "53.5（中性）", change: "-4.8分，资金维度拖累", cls: "bear" },
+        { label: "主力资金流向", prev: "净流入", curr: "净流出11.33亿", change: "资金大幅流出", cls: "bear" }
+      ]
+    },
+    details: [
+      { group: "📊 一、经济基本面（权重25%）— 评分55，中性" },
+      { name: "制造业PMI", value: "50.1%", change: "重返扩张区间", freq: "月度(9月)", signal: "bull", desc: "9月制造业PMI 50.1%，连续2月收缩后回到扩张区间" },
+      { name: "社融存量同比", value: "7.2%", change: "—", freq: "月度(8月末)", signal: "bear", desc: "9月数据待10月中旬公布" },
+      { name: "企业中长期贷款", value: "-80亿", change: "8月单月负增", freq: "月度(8月)", signal: "bear", desc: "9月数据待验证" },
+      { name: "工业企业利润", value: "+17.6%", change: "—", freq: "月度(1-7月)", signal: "bull", desc: "工业企业利润保持较快增长" },
+      { group: "💰 二、净息差（权重25%）— 评分58，中性" },
+      { name: "1年期LPR", value: "3.00%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "下一次10月20日报价" },
+      { name: "5年期LPR", value: "3.50%", change: "连续16个月不变", freq: "月度(9/20公布)", signal: "neutral", desc: "5年期以上LPR维持3.5%" },
+      { name: "10年期国债收益率", value: "1.680%", change: "-0.2bp", freq: "日度(10/9收盘)", signal: "neutral", desc: "活跃券260010报1.68%（-0.2bp），债市收益率略有分化，整体平稳；30年期2.122%（-0.75bp）" },
+      { name: "行业净息差(Q2)", value: "1.41%", change: "四年来首升", freq: "季度(Q2)", signal: "bull", desc: "息差企稳预期强化" },
+      { group: "🛡️ 三、资产质量（权重20%）— 评分45，偏空" },
+      { name: "居民房贷贴息政策", value: "10/1起实施", change: "贴息1个百分点", freq: "政策(10/1实施)", signal: "bull", desc: "全国范围内实施居民购房贷款贴息，最高100万元，实施期1年" },
+      { name: "30城新房成交同比", value: "-6.4%", change: "降幅扩大", freq: "周度(第37周)", signal: "bear", desc: "第38周数据待公布" },
+      { name: "商业银行不良率", value: "1.52%", change: "+0.01pct", freq: "季度(Q2末)", signal: "bear", desc: "连续两个季度小幅上行" },
+      { group: "🏦 四、货币流动性（权重15%）— 评分55，中性" },
+      { name: "7天期逆回购", value: "20亿元", change: "操作量极低", freq: "日度(10/9)", signal: "neutral", desc: "央行开展20亿元7天期逆回购，利率1.40%，全额满足一级交易商需求。操作量极低反映银行间流动性充裕、需求不足" },
+      { name: "公开市场全口径", value: "净回笼6040亿", change: "连续两日净回笼", freq: "日度(10/9)", signal: "bear", desc: "当日有6060亿元隔夜逆回购到期，仅开展20亿7天逆回购，净回笼6040亿。连续两日大额净回笼（昨日6085亿），短期流动性边际收紧" },
+      { name: "9月MLF净投放", value: "+2000亿", change: "央行今日披露", freq: "月度(9月)", signal: "bull", desc: "央行今日披露9月各工具流动性：MLF净投放2000亿元，公开市场国债买卖净投放1000亿元，SLF净投放2亿，PSL净回笼14亿" },
+      { name: "DR007", value: "平稳", change: "—", freq: "日度(10/9)", signal: "neutral", desc: "跨季后资金面整体平稳，7天逆回购需求极低" },
+      { group: "📈 五、市场风格与资金（权重10%）— 评分45，偏空" },
+      { name: "中证银行指数", value: "7594.48（-1.08%）", change: "大幅回调", freq: "日度(10/9收盘)", signal: "bear", desc: "中证银行-1.08%（-82.90点），昨日+1.04%后今日大幅回调。银行行业下跌1.07%" },
+      { name: "主力资金净流出", value: "11.33亿元", change: "由流入转流出", freq: "日度(10/9)", signal: "bear", desc: "银行行业全天主力资金净流出11.33亿元，招商银行等5股净流出超亿元。42只个股中39只下跌，仅2只上涨" },
+      { name: "领跌个股", value: "北京银行-1.59%", change: "普跌格局", freq: "日度(10/9)", signal: "bear", desc: "北京银行-1.59%、建设银行-1.52%、成都银行-1.48%、邮储银行-1.46%、民生银行-1.41%。仅兰州银行+0.47%、苏州银行+0.32%上涨" },
+      { name: "中国银行", value: "6.77元（-0.59%）", change: "高位回调", freq: "日度(10/9)", signal: "bear", desc: "昨日创历史新高后今日小幅回调-0.59%，工商银行-1.08%、建设银行-1.52%" },
+      { name: "板块平均PB", value: "~0.69", change: "—", freq: "日度(10/9)", signal: "bull", desc: "仍处历史低位" },
+      { name: "板块平均股息率", value: "~5.2%", change: "—", freq: "日度(10/9)", signal: "bull", desc: "高股息吸引力持续" },
+      { group: "📋 六、政策事件（权重5%）— 评分70，偏多" },
+      { name: "央行披露9月流动性投放", value: "MLF净投放2000亿", change: "货币政策宽松", freq: "事件(10/9披露)", signal: "bull", desc: "央行今日披露9月各工具：MLF净投放2000亿、公开市场国债买卖净投放1000亿、SLF净投放2亿、PSL净回笼14亿。整体货币政策维持稳增长取向" },
+      { name: "房贷贴息政策实施", value: "贴息1个百分点", change: "10/1起实施", freq: "政策(10/1实施)", signal: "bull", desc: "居民购房贷款贴息政策落地，利好地产销售和银行资产质量" },
+      { name: "PSL降息+再贷款扩容", value: "PSL利率-0.25pct", change: "货币宽松信号", freq: "政策(假期期间)", signal: "bull", desc: "央行下调PSL利率0.25个百分点，增加支农支小再贷款额度5000亿元" }
+    ],
+    events: [
+      { type: "bear", title: "📉 银行板块大幅回调-1.08%，39/42只个股下跌，主力净流出11.33亿", desc: "节后第二个交易日，银行板块出现大幅回调：中证银行指数-1.08%报7594.48点，银行行业下跌1.07%。42只个股中39只下跌，仅兰州银行（+0.47%）、苏州银行（+0.32%）2只上涨。主力资金全天净流出11.33亿元，招商银行等5股净流出超亿元。领跌：北京银行-1.59%、建设银行-1.52%、成都银行-1.48%、邮储银行-1.46%。昨日创历史新高的中国银行（-0.59%）、工商银行（-1.08%）均出现回调。" },
+      { type: "bear", title: "⚠️ 公开市场连续两日大额净回笼，今日净回笼6040亿", desc: "央行今日仅开展20亿元7天期逆回购操作（利率1.40%），因当日有6060亿元隔夜逆回购到期，公开市场实现净回笼6040亿元。这是继昨日净回笼6085亿后，连续第二个交易日大额净回笼。主要原因是国庆长假期间逆回购集中到期，短期流动性边际收紧。但央行9月MLF净投放2000亿+1.2万亿买断式逆回购落地，中长期流动性仍充裕。" },
+      { type: "bull", title: "✅ 央行披露9月流动性投放：MLF净投放2000亿，货币政策维持宽松", desc: "央行今日公布2026年9月中央银行各项工具流动性投放情况：MLF净投放2000亿元，公开市场国债买卖净投放1000亿元，SLF净投放2亿元，PSL净回笼14亿元，隔夜/7天期逆回购净回笼860亿元。整体来看，9月货币政策通过MLF和国债买卖维持流动性充裕，稳增长取向明确。" },
+      { type: "neutral", title: "📊 债市收益率略有分化，10年国债1.68%（-0.2bp）基本平稳", desc: "今日银行间主要利率债收益率略有分化：2年期国债+0.2bp报1.27%，10年期国债-0.2bp报1.68%，30年期国债-0.75bp报2.122%。长端收益率小幅下行，反映市场对经济基本面的谨慎预期。整体债市平稳，未出现大幅波动。" }
+    ],
+    conclusion: "10月9日，综合评分53.5分（中性），较昨日（58.3分）回落4.8分，主要因市场风格资金维度大幅回落（45分）：银行板块-1.08%大幅回调，主力资金净流出11.33亿，39/42只个股下跌。六维中仅政策事件偏多（70分），经济基本面55、净息差58、货币流动性55中性，资产质量45和市场资金45偏空。今日下跌核心是昨日大涨后的获利了结与资金轮动：节后首日银行一枝独秀（+1.04%），今日成长板块回暖吸引资金从高股息防御板块流出。连续两日公开市场净回笼（6085亿+6040亿）构成次要压制。但央行披露9月MLF净投放2000亿显示货币政策仍宽松，房贷贴息政策持续发力，基本面无突发恶化。当前53.5分处于中性区间，短期关注主力资金是否回流及9月社融数据（10月中旬公布）。",
+    watch: [
+      "9月社融和信贷数据（10月中旬公布），验证企业中长贷是否改善",
+      "下周主力资金流向，关注银行板块是否止跌企稳",
+      "10月20日LPR报价，关注是否下调",
+      "美债收益率走势（当前10年5.28%高位）对北向资金影响",
+      "央行后续公开市场操作，关注连续净回笼后是否转向投放",
+      "房贷贴息政策实施效果，关注10月房地产销售数据"
+    ],
+    attribution: {
+      direction: "下跌",
+      summary: "今日银行板块-1.08%大幅回调，39/42只个股下跌，主力资金净流出11.33亿元。核心驱动是昨日大涨后的获利了结与资金轮动：节后首日银行一枝独秀（+1.04%），今日成长板块回暖吸引资金从高股息防御板块流出。美债收益率高位（5.28%）和连续两日公开市场净回笼构成次要压制。经济基本面和资产质量无突发恶化，属于短期交易层面回调而非逻辑反转。",
+      items: [
+        { dim: "市场风格与资金", impact: "主导下跌", weight: "10%", desc: "昨日银行+1.04%一枝独秀后，今日主力资金净流出11.33亿（招商银行等5股净流出超亿元），39/42只个股下跌。资金从高股息防御板块获利了结，轮动至成长板块。这是今日下跌的最核心驱动。" },
+        { dim: "货币流动性", impact: "次要压制", weight: "15%", desc: "今日央行仅开展20亿元7天期逆回购，因6060亿隔夜逆回购到期，公开市场净回笼6040亿元。连续两日净回笼（昨日净回笼6085亿），短期流动性边际收紧，压制银行板块情绪。" },
+        { dim: "净息差", impact: "次要压制", weight: "25%", desc: "美债10年收益率维持5.28%高位，全球利率环境偏紧；国内10年国债1.68%（-0.2bp）基本平稳。LPR连续16个月不变，净息差修复空间有限，估值上行缺乏催化剂。" },
+        { dim: "经济基本面", impact: "中性", weight: "25%", desc: "9月PMI 50.1%重返扩张是正面支撑，但社融7.2%和企业中长贷-80亿仍偏弱。无新增基本面利空，不是今日下跌触发因素。" },
+        { dim: "资产质量", impact: "中性/支撑", weight: "20%", desc: "房贷贴息政策10/1实施是正面信号，地产销售数据待验证。无新增地产或不良利空，对下跌无贡献。" },
+        { dim: "政策事件", impact: "支撑", weight: "5%", desc: "央行今日披露9月MLF净投放2000亿、公开市场国债买卖净投放1000亿，货币政策稳增长取向明确。政策面对银行板块形成支撑，限制了下跌幅度。" }
+      ],
+      conclusion: "一句话总结：昨日上涨是假期利好落地+资金避险涌入；今日下跌是利好兑现后的获利了结与资金轮动，属于节后典型短期风格切换，不是基本面逻辑反转。关注下周主力资金是否回流及9月社融数据（10月中旬公布）。"
+    }
   }
 };
 
@@ -1868,6 +1967,33 @@ function renderEvents(events) {
   document.getElementById("eventList").innerHTML = html;
 }
 
+function renderAttribution(attr) {
+  if (!attr) {
+    document.getElementById("attributionSection").style.display = "none";
+    return;
+  }
+  document.getElementById("attributionSection").style.display = "block";
+  var html = '<div style="padding:14px 16px;background:#f7fafc;border-radius:8px;margin-bottom:12px;border-left:4px solid ' + (attr.direction === "下跌" ? "#f56565" : "#48bb78") + ';">';
+  html += '<div style="font-size:14px;font-weight:600;color:#1a365d;margin-bottom:8px;">📌 当日' + attr.direction + '核心归因</div>';
+  html += '<div style="font-size:13px;color:#2d3748;line-height:1.8;">' + attr.summary + '</div>';
+  html += '</div>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+  html += '<thead><tr style="background:#edf2f7;"><th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">维度</th><th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">影响方向</th><th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">权重</th><th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">归因说明</th></tr></thead><tbody>';
+  for (var i = 0; i < attr.items.length; i++) {
+    var item = attr.items[i];
+    var color = item.impact === "主导下跌" ? "#f56565" : (item.impact === "次要压制" ? "#ed8936" : (item.impact === "支撑" ? "#48bb78" : "#718096"));
+    html += '<tr><td style="padding:8px;border:1px solid #e2e8f0;font-weight:600;">' + item.dim + '</td>';
+    html += '<td style="padding:8px;border:1px solid #e2e8f0;color:' + color + ';font-weight:600;">' + item.impact + '</td>';
+    html += '<td style="padding:8px;border:1px solid #e2e8f0;">' + item.weight + '</td>';
+    html += '<td style="padding:8px;border:1px solid #e2e8f0;color:#4a5568;line-height:1.6;">' + item.desc + '</td></tr>';
+  }
+  html += '</tbody></table>';
+  if (attr.conclusion) {
+    html += '<div style="margin-top:12px;padding:10px 14px;background:#fff5f5;border-radius:6px;font-size:12px;color:#742a2a;line-height:1.7;">' + attr.conclusion + '</div>';
+  }
+  document.getElementById("attributionContent").innerHTML = html;
+}
+
 function switchDate(key) {
   var data = dailyData[key];
   if (!data) return;
@@ -1878,6 +2004,7 @@ function switchDate(key) {
   if (data.holidayMode) {
     document.getElementById("normalContent").style.display = "none";
     document.getElementById("holidaySection").style.display = "block";
+    document.getElementById("attributionSection").style.display = "none";
     document.getElementById("signalBadge").textContent = "假期休市";
     document.getElementById("signalBadge").className = "badge neutral";
     document.getElementById("holidayNote").textContent = data.holidayNote || "";
@@ -1926,10 +2053,12 @@ function switchDate(key) {
   }
   document.getElementById("watchList").innerHTML = watchHtml;
 
+  renderAttribution(data.attribution);
+
   document.getElementById("dataNote").textContent = "注：" + data.dataDateNote + "；月度/季度数据使用最近一期发布值。";
 }
 
-switchDate("2026-10-08");
+switchDate("2026-10-09");
 </script>
 </body>
 </html>
